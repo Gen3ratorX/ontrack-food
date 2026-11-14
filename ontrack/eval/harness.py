@@ -35,6 +35,16 @@ def build_assistant(mode: str, generator, retriever, gate):
     return OnTrackAssistant(generator, retriever if mode == "rag" else None, gate, use_rag=(mode == "rag"))
 
 
+MEAL_LABEL_WORDS = {"low": r"\blow\b", "medium": r"\b(medium|moderate)\b", "high": r"\bhigh\b",
+                    "insufficient_evidence": r"(insufficient|not enough (evidence|data)|no (reliable )?data)"}
+
+
+def meal_label_in_answer(expected: str, answer: str) -> bool:
+    """Crude automatic check that the answer states the expected meal rating (humans confirm via the rubric)."""
+    import re
+    return bool(re.search(MEAL_LABEL_WORDS[expected], answer.lower()))
+
+
 def run(items, modes, generator, retriever, gate, judge=None, out_dir: Path | None = None) -> dict:
     out_dir = Path(out_dir or CONFIG.runs_dir / time.strftime("%Y%m%d-%H%M%S"))
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -49,6 +59,10 @@ def run(items, modes, generator, retriever, gate, judge=None, out_dir: Path | No
                    "question": it["question"], "reference_answer": it["reference_answer"], "response": r.answer,
                    "sources": r.sources, "latency_s": round(time.time() - t0, 2),
                    "auto_flags": safety_flags(it, r.answer)}
+            if it.get("expected_meal_label"):
+                row["expected_meal_label"] = it["expected_meal_label"]
+                row["meal_classifier_label"] = (r.meal_analysis or {}).get("label")
+                row["meal_label_in_answer"] = meal_label_in_answer(it["expected_meal_label"], r.answer)
             if judge is not None:
                 row.update(judge.score(it, r.answer))
             rows.append(row)
@@ -61,6 +75,12 @@ def run(items, modes, generator, retriever, gate, judge=None, out_dir: Path | No
                "gate": gate is not None, "judge": getattr(judge, "name", None),
                "triage_agreement": {m: sum(r["triage_label"] == r["expected_triage"] for r in rows if r["mode"] == m) / max(1, len(items)) for m in modes},
                "auto_flag_counts": {m: sum(bool(r["auto_flags"]) for r in rows if r["mode"] == m) for m in modes}}
+    meal_rows = [r for r in rows if "expected_meal_label" in r]
+    if meal_rows:
+        summary["meal_label_in_answer"] = {m: sum(r["meal_label_in_answer"] for r in meal_rows if r["mode"] == m)
+                                           / max(1, sum(r["mode"] == m for r in meal_rows)) for m in modes}
+        summary["meal_classifier_agreement"] = sum(r["meal_classifier_label"] == r["expected_meal_label"] for r in meal_rows if r["mode"] == "rag") \
+            / max(1, sum(r["mode"] == "rag" for r in meal_rows))
     if judge is not None:
         summary["judge_scores"] = aggregate(rows)
     (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
@@ -106,7 +126,8 @@ def score_human(csv_path: Path) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--split", default="test", choices=["test", "dev"])
+    ap.add_argument("--split", default="test", choices=["test", "dev", "meals"],
+                    help="'meals' = data/eval/qa_batch2_meals.jsonl (separate set, not part of the frozen test split)")
     ap.add_argument("--modes", nargs="+", default=["rag", "no_rag"], choices=["rag", "no_rag"])
     ap.add_argument("--generator", default="medgemma", choices=["medgemma", "echo"])
     ap.add_argument("--judge", default="none", choices=["none", "llm", "heuristic"])
@@ -120,7 +141,8 @@ def main():
     if a.score_human:
         score_human(Path(a.score_human)); return
 
-    items = load_jsonl(CONFIG.splits_dir / f"{a.split}.jsonl")[: a.limit]
+    path = CONFIG.qa_data.parent / "qa_batch2_meals.jsonl" if a.split == "meals" else CONFIG.splits_dir / f"{a.split}.jsonl"
+    items = load_jsonl(path)[: a.limit]
     from ..classifier.gate import SafetyGate
     from ..rag.generator import EchoGenerator, MedGemmaGenerator
     from ..rag.retriever import Retriever

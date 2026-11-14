@@ -21,14 +21,36 @@ Question: {question}
 
 Answer (simple English, at most about 180 words, end with a one-line reminder to check with their health worker where relevant):"""
 
+MEAL_RAG_TEMPLATE = """The user described a meal. OnTrack's meal classifier (a rule engine using cited GI studies and FAO/INFOODS WAFCT 2019 food composition data) produced the analysis marked [M]. Explain it in simple words:
+- State the rating exactly as given in [M] (low / medium / high / insufficient evidence). Do NOT change the rating or any number, and do not calculate new GI or glycaemic-load values. Say the numbers are estimates based on assumed portions.
+- Name the foods that drive the rating, and give 2-3 practical ways to lower the impact (smaller starch portion, add vegetables or protein, water instead of sugary drinks), using the plate method.
+- If [M] says insufficient evidence, say there is not enough data and suggest checking blood sugar about 2 hours after the meal.
+Cite [M] for the analysis and [S1], [S2]... for facts from the numbered sources.
+
+Meal analysis:
+{meal}
+
+Sources:
+{context}
+
+Question: {question}
+
+Answer (simple English, at most about 200 words, end with a one-line reminder to check with their health worker where relevant):"""
+
 NO_RAG_TEMPLATE = """Question: {question}
 
 Answer (simple English, at most about 180 words, end with a one-line reminder to check with their health worker where relevant):"""
 
 
-def build_messages(question: str, context: str | None = None) -> list[dict]:
-    """Chat messages in the Gemma 3 / MedGemma processor format (text-only)."""
-    user = RAG_TEMPLATE.format(context=context, question=question) if context is not None else NO_RAG_TEMPLATE.format(question=question)
+def build_messages(question: str, context: str | None = None, meal: str | None = None) -> list[dict]:
+    """Chat messages in the Gemma 3 / MedGemma processor format (text-only).
+    `meal` is MealAnalysis.to_context(); only used together with RAG context."""
+    if context is not None and meal:
+        user = MEAL_RAG_TEMPLATE.format(meal=meal, context=context, question=question)
+    elif context is not None:
+        user = RAG_TEMPLATE.format(context=context, question=question)
+    else:
+        user = NO_RAG_TEMPLATE.format(question=question)
     return [
         {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [{"type": "text", "text": user}]},

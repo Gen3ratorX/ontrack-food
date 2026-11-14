@@ -62,3 +62,22 @@ def test_harness_smoke(tmp_path, retriever):
     summary = run(items, ["rag", "no_rag"], EchoGenerator(), retriever, SafetyGate(), HeuristicJudge(), tmp_path)
     assert (tmp_path / "human_scoring.csv").exists() and (tmp_path / "human_scoring_key.json").exists()
     assert set(summary["judge_scores"]) == {"rag", "no_rag"}
+
+
+def test_meal_qa_items_schema_and_harness(tmp_path, retriever):
+    from ontrack.classifier.gate import SafetyGate
+    from ontrack.eval.harness import run
+    from ontrack.rag.generator import EchoGenerator
+
+    items = [json.loads(l) for l in open(CONFIG.qa_data.parent / "qa_batch2_meals.jsonl", encoding="utf-8")]
+    from ontrack.meal.engine import doc_meta
+    kb_ids = set(doc_meta())
+    assert len(items) >= 6
+    for it in items:
+        assert it["category"] == "meal_classification" and it["expected_meal_label"] in ("low", "medium", "high", "insufficient_evidence")
+        assert set(it["source_ids"]) <= kb_ids
+    test_ids = {json.loads(l)["id"] for l in open(CONFIG.splits_dir / "test.jsonl", encoding="utf-8")}
+    assert not test_ids & {it["id"] for it in items}  # frozen test split untouched
+    summary = run(items, ["rag", "no_rag"], EchoGenerator(), retriever, SafetyGate(), None, tmp_path)
+    assert summary["meal_classifier_agreement"] == 1.0
+    assert summary["meal_label_in_answer"]["rag"] > summary["meal_label_in_answer"]["no_rag"]

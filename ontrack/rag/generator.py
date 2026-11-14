@@ -63,6 +63,10 @@ class EchoGenerator:
 
     def generate(self, messages: list[dict], max_new_tokens: int | None = None) -> str:
         user = messages[-1]["content"][0]["text"]
+        meal = re.search(r"Rating: (\w+) expected blood-sugar impact", user)
+        if meal:
+            return (f"(test generator) Meal rating: {meal.group(1).lower()} [M]. These are estimates based on assumed portions. "
+                    "Please check with your health worker.")
         m = re.search(r"\[S1\] Source: (.*?)\n(.*?)(\n\n\[S2\]|\n\nQuestion:)", user, flags=re.S)
         if m:
             snippet = " ".join(m.group(2).split()[:40])

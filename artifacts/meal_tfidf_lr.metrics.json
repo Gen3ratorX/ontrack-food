@@ -1,0 +1,630 @@
+{
+ "n_train_engine_labelled": 176,
+ "n_hard_manual": 35,
+ "cv_folds": 5,
+ "seed": 42,
+ "label_counts_train": {
+  "low": 34,
+  "medium": 46,
+  "high": 87,
+  "insufficient_evidence": 9
+ },
+ "cv_lr_vs_engine_labels": {
+  "accuracy": 0.585,
+  "macro_f1": 0.51,
+  "per_class_f1": {
+   "low": 0.452,
+   "medium": 0.416,
+   "high": 0.743,
+   "insufficient_evidence": 0.429
+  },
+  "confusion_matrix": {
+   "labels": [
+    "low",
+    "medium",
+    "high",
+    "insufficient_evidence"
+   ],
+   "matrix": [
+    [
+     14,
+     16,
+     3,
+     1
+    ],
+    [
+     6,
+     21,
+     18,
+     1
+    ],
+    [
+     6,
+     16,
+     65,
+     0
+    ],
+    [
+     2,
+     2,
+     2,
+     3
+    ]
+   ]
+  }
+ },
+ "hard_engine_vs_manual": {
+  "accuracy": 1.0,
+  "macro_f1": 1.0,
+  "per_class_f1": {
+   "low": 1.0,
+   "medium": 1.0,
+   "high": 1.0,
+   "insufficient_evidence": 1.0
+  },
+  "confusion_matrix": {
+   "labels": [
+    "low",
+    "medium",
+    "high",
+    "insufficient_evidence"
+   ],
+   "matrix": [
+    [
+     9,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     9,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     11,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     6
+    ]
+   ]
+  }
+ },
+ "hard_lr_vs_manual": {
+  "accuracy": 0.514,
+  "macro_f1": 0.529,
+  "per_class_f1": {
+   "low": 0.667,
+   "medium": 0.316,
+   "high": 0.421,
+   "insufficient_evidence": 0.714
+  },
+  "confusion_matrix": {
+   "labels": [
+    "low",
+    "medium",
+    "high",
+    "insufficient_evidence"
+   ],
+   "matrix": [
+    [
+     6,
+     2,
+     0,
+     1
+    ],
+    [
+     1,
+     3,
+     4,
+     1
+    ],
+    [
+     2,
+     4,
+     4,
+     1
+    ],
+    [
+     0,
+     1,
+     0,
+     5
+    ]
+   ]
+  }
+ },
+ "hard_lr_engine_agreement": 0.514,
+ "food_recognition_hard": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "n": 35,
+  "errors": []
+ },
+ "food_recognition_train": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "n": 176
+ },
+ "hard_items": [
+  {
+   "id": "meal-h000",
+   "text": "me di dɔkono ne nam",
+   "manual": "high",
+   "engine": "high",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h001",
+   "text": "I had komi and fried fish with pepper",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h002",
+   "text": "kenkay with shito and fish",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h003",
+   "text": "2 balls of bankuu and okro",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h004",
+   "text": "waakey with gari and spaghetti",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h005",
+   "text": "small plate of jolof with salad and grilled chicken",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h006",
+   "text": "koko with no sugar",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h007",
+   "text": "koko with 3 teaspoons of sugar and bread",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h008",
+   "text": "fufu with light soup but without meat",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h009",
+   "text": "I skipped the rice and had only fish and salad",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h010",
+   "text": "my sugar is 9 after eating banku",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h011",
+   "text": "kokonte with groundnut soup",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h012",
+   "text": "tom brown porridge",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h013",
+   "text": "rice water",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h014",
+   "text": "a bottle of malta guinness",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h015",
+   "text": "sobolo",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h016",
+   "text": "ampesi and kontomire",
+   "manual": "insufficient_evidence",
+   "engine": "insufficient_evidence",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h017",
+   "text": "bayerɛ ampesi with nkontommire",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h018",
+   "text": "boiled white yam with kontomire stew and egg",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h019",
+   "text": "yellow yam with garden egg stew",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h020",
+   "text": "bankye ampesi",
+   "manual": "high",
+   "engine": "high",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h021",
+   "text": "borɔdeɛ ampesi with nkontommire and fish",
+   "manual": "low",
+   "engine": "low",
+   "lr": "insufficient_evidence"
+  },
+  {
+   "id": "meal-h022",
+   "text": "kofi brokeman and groundnuts",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h023",
+   "text": "redred",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h024",
+   "text": "nkatenkwan ne fufu",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h025",
+   "text": "abenkwan and 2 balls of fufu",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h026",
+   "text": "3 balls of banku with tilapia and pepper",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h027",
+   "text": "half ball of kenkey with fish and salad",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h028",
+   "text": "100 g kenkey and sardines",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h029",
+   "text": "200g rice",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h030",
+   "text": "gari soakings with sugar and groundnuts",
+   "manual": "high",
+   "engine": "high",
+   "lr": "low"
+  },
+  {
+   "id": "meal-h031",
+   "text": "kelewele and a minerals",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h032",
+   "text": "a cup of tea without sugar and 2 boiled eggs",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-h033",
+   "text": "ayoyo soup with tz",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "high"
+  },
+  {
+   "id": "meal-h034",
+   "text": "akple with okro soup and crab",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "medium"
+  }
+ ],
+ "n_hard_blind": 18,
+ "hard_blind_engine_vs_manual": {
+  "accuracy": 1.0,
+  "macro_f1": 0.75,
+  "per_class_f1": {
+   "low": 1.0,
+   "medium": 1.0,
+   "high": 1.0,
+   "insufficient_evidence": 0.0
+  },
+  "confusion_matrix": {
+   "labels": [
+    "low",
+    "medium",
+    "high",
+    "insufficient_evidence"
+   ],
+   "matrix": [
+    [
+     6,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     3,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     9,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ]
+  }
+ },
+ "hard_blind_lr_vs_manual": {
+  "accuracy": 0.444,
+  "macro_f1": 0.336,
+  "per_class_f1": {
+   "low": 0.444,
+   "medium": 0.286,
+   "high": 0.615,
+   "insufficient_evidence": 0.0
+  },
+  "confusion_matrix": {
+   "labels": [
+    "low",
+    "medium",
+    "high",
+    "insufficient_evidence"
+   ],
+   "matrix": [
+    [
+     2,
+     4,
+     0,
+     0
+    ],
+    [
+     1,
+     2,
+     0,
+     0
+    ],
+    [
+     0,
+     5,
+     4,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0
+    ]
+   ]
+  }
+ },
+ "food_recognition_hard_blind": {
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "n": 18,
+  "errors": []
+ },
+ "hard_blind_items": [
+  {
+   "id": "meal-b000",
+   "text": "Two fingers of boiled green plantain with garden egg stew and boiled egg",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-b001",
+   "text": "I drank 2 bottles of Fanta",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-b002",
+   "text": "one slice of wholemeal bread with avocado and egg",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b003",
+   "text": "big bowl of oats with honey",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "low"
+  },
+  {
+   "id": "meal-b004",
+   "text": "Nkate nkwan with a ball of omo tuo",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b005",
+   "text": "tuo zaafi with ayoyo and guinea fowl",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b006",
+   "text": "3 slices of pawpaw and a banana",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b007",
+   "text": "kontomire stew with boiled eggs, no yam",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-b008",
+   "text": "abolo and grilled fish with pepper sauce",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b009",
+   "text": "a plate of fried rice with chicken and coleslaw and a coke",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b010",
+   "text": "half plate of waakye with fish and salad",
+   "manual": "low",
+   "engine": "low",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b011",
+   "text": "100g fufu",
+   "manual": "low",
+   "engine": "low",
+   "lr": "low"
+  },
+  {
+   "id": "meal-b012",
+   "text": "a medium ball of kenkey",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-b013",
+   "text": "gari and beans with fried plantain",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b014",
+   "text": "plain rice with okro stew",
+   "manual": "high",
+   "engine": "high",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b015",
+   "text": "Is a cup of rice okay?",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "medium"
+  },
+  {
+   "id": "meal-b016",
+   "text": "I want to eat jollof but my sugar is 15",
+   "manual": "high",
+   "engine": "high",
+   "lr": "high"
+  },
+  {
+   "id": "meal-b017",
+   "text": "akyeke with fried fish and shito",
+   "manual": "medium",
+   "engine": "medium",
+   "lr": "medium"
+  }
+ ],
+ "note": "All data synthetic. CV labels come from the rule engine (label leakage): CV accuracy = how well TF-IDF+LR imitates the engine. Hard set is small (n=35) and hand-labelled with the documented method."
+}

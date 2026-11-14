@@ -45,3 +45,10 @@ code,ontrack_name,food_name_en,energy_kcal,protein_g,fat_g,carb_available_g,fibr
 12_023,coconut water,Coconut water,22,0.2,[0.5],4.2,0,41,205
 13_002,white sugar,"Sugar, white",400,0,0,100.0,0,1,2
 13_001,honey,Honey,326,0.4,0,81.0,0.2,4,52
+01_133,oats porridge (no sugar),"Oats, porridge* (without salt)",65,2.1,1.4,10.3,1.8,2,50
+01_053,"macaroni / spaghetti, boiled (proxy for talia)","Macaroni, boiled* (without salt), drained",124,4.3,0.5,24.9,1.1,1,41
+01_188,sweet biscuit,"Biscuit, sweet, plain, unfortified",479,6.2,21.2,64.9,2.0,390,119
+03_040,"soya beans, Ghana, boiled","Soya bean, combined varieties (Ghana), not soaked, boiled* (without salt), drained",158,14.3,[6.5],5.7,9.8,2,547
+08_003,"egg, fried","Egg, chicken, fried in oil",197,13.6,14.9,2,0,162,151
+07_011,"beef, lean, grilled","Beef meat, lean, ca. 5% fat, grilled* (without salt or fat)",182,31.3,6.3,0,0,117,359
+12_008,"tea, infusion (no sugar)","Tea, infusion",0,0.1,0,0,0,1,18

@@ -24,6 +24,8 @@ class Config:
     kb_dir: Path = field(default_factory=lambda: ROOT / "knowledge_base" / "docs")
     index_dir: Path = field(default_factory=lambda: ROOT / "artifacts" / "index")
     classifier_path: Path = field(default_factory=lambda: ROOT / "artifacts" / "triage_tfidf_lr.joblib")
+    meal_model_path: Path = field(default_factory=lambda: ROOT / "artifacts" / "meal_tfidf_lr.joblib")
+    meal_data: Path = field(default_factory=lambda: ROOT / "data" / "meal" / "meal_descriptions.jsonl")
     triage_data: Path = field(default_factory=lambda: ROOT / "data" / "classifier" / "triage_seed.jsonl")
     qa_data: Path = field(default_factory=lambda: ROOT / "data" / "eval" / "qa_batch1.jsonl")
     splits_dir: Path = field(default_factory=lambda: ROOT / "data" / "eval" / "splits")

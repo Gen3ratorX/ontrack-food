@@ -70,6 +70,14 @@ SELECTED = {
     "12_023": "coconut water",
     "13_002": "white sugar",
     "13_001": "honey",
+    # added for the meal classifier (v0.2)
+    "01_133": "oats porridge (no sugar)",
+    "01_053": "macaroni / spaghetti, boiled (proxy for talia)",
+    "01_188": "sweet biscuit",
+    "03_040": "soya beans, Ghana, boiled",
+    "08_003": "egg, fried",
+    "07_011": "beef, lean, grilled",
+    "12_008": "tea, infusion (no sugar)",
 }
 
 COLS = {

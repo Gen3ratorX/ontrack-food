@@ -58,3 +58,10 @@ All values per 100 g edible portion as described. Available carbohydrate is what
 - coconut water — WAFCT 'Coconut water' [12_023]: energy 22 kcal, available carbohydrate 4.2 g, fibre 0 g, protein 0.2 g, fat [0.5] g, sodium 41 mg per 100 g.
 - white sugar — WAFCT 'Sugar, white' [13_002]: energy 400 kcal, available carbohydrate 100.0 g, fibre 0 g, protein 0 g, fat 0 g, sodium 1 mg per 100 g.
 - honey — WAFCT 'Honey' [13_001]: energy 326 kcal, available carbohydrate 81.0 g, fibre 0.2 g, protein 0.4 g, fat 0 g, sodium 4 mg per 100 g.
+- oats porridge (no sugar) — WAFCT 'Oats, porridge* (without salt)' [01_133]: energy 65 kcal, available carbohydrate 10.3 g, fibre 1.8 g, protein 2.1 g, fat 1.4 g, sodium 2 mg per 100 g.
+- macaroni / spaghetti, boiled (proxy for talia) — WAFCT 'Macaroni, boiled* (without salt), drained' [01_053]: energy 124 kcal, available carbohydrate 24.9 g, fibre 1.1 g, protein 4.3 g, fat 0.5 g, sodium 1 mg per 100 g.
+- sweet biscuit — WAFCT 'Biscuit, sweet, plain, unfortified' [01_188]: energy 479 kcal, available carbohydrate 64.9 g, fibre 2.0 g, protein 6.2 g, fat 21.2 g, sodium 390 mg per 100 g.
+- soya beans, Ghana, boiled — WAFCT 'Soya bean, combined varieties (Ghana), not soaked, boiled* (without salt), drained' [03_040]: energy 158 kcal, available carbohydrate 5.7 g, fibre 9.8 g, protein 14.3 g, fat [6.5] g, sodium 2 mg per 100 g.
+- egg, fried — WAFCT 'Egg, chicken, fried in oil' [08_003]: energy 197 kcal, available carbohydrate 2 g, fibre 0 g, protein 13.6 g, fat 14.9 g, sodium 162 mg per 100 g.
+- beef, lean, grilled — WAFCT 'Beef meat, lean, ca. 5% fat, grilled* (without salt or fat)' [07_011]: energy 182 kcal, available carbohydrate 0 g, fibre 0 g, protein 31.3 g, fat 6.3 g, sodium 117 mg per 100 g.
+- tea, infusion (no sugar) — WAFCT 'Tea, infusion' [12_008]: energy 0 kcal, available carbohydrate 0 g, fibre 0 g, protein 0.1 g, fat 0 g, sodium 1 mg per 100 g.

@@ -171,6 +171,16 @@
     "file": "docs/gi_yam_ampofo2021.md"
   },
   {
+    "id": "glycaemic_load_method",
+    "title": "Glycaemic load (GL) — definition and cut-offs",
+    "publisher": "University of Sydney Glycemic Index Research Service, GI News (glycemicindex.com)",
+    "url": "https://glycemicindex.com/2021/11/how-to-enjoy-a-moderate-glycemic-load-diet/",
+    "licence": "Facts with citation (project-authored summary).",
+    "accessed": "2026-11-14",
+    "topic": "glycaemic load, glycaemic index, portion size, meal classification",
+    "file": "docs/glycaemic_load_method.md"
+  },
+  {
     "id": "idf_atlas_2025_africa",
     "title": "IDF Diabetes Atlas 11th edition (2025) — Africa region figures",
     "publisher": "International Diabetes Federation; Genitsaridi et al., Lancet Diabetes Endocrinol 2025 (author accepted manuscript)",
