@@ -1,8 +1,11 @@
 """Extract Ghana-relevant foods from the FAO/INFOODS West African Food Composition Table (WAFCT 2019).
 
-Downloads the official Excel file (if not present), selects a curated list of food codes and writes:
+If knowledge_base/data/wafct2019_selected.csv is already present, the download and rebuild are
+skipped unless --force is passed (Colab just needs the committed extract). Otherwise the official
+Excel file is downloaded when it is not already on disk, a curated list of food codes is selected, and:
   knowledge_base/data/wafct2019_selected.csv   (machine-readable, per 100 g edible portion)
   knowledge_base/docs/wafct2019_ghana_foods.md (text for the RAG index)
+are written.
 
 Values are copied exactly from sheet "03 NV_sum_39 (per 100g EP)". Values in [brackets] are
 FAO's notation for lower-quality/ estimated values and are kept as-is.
@@ -13,6 +16,9 @@ User Guide & Condensed Food Composition Table. Rome, FAO.
 from __future__ import annotations
 
 import argparse
+import shutil
+import sys
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -21,6 +27,12 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 URL = "https://www.fao.org/fileadmin/user_upload/faoweb/2020/WAFCT_2019.xlsx"
 SHEET = "03 NV_sum_39 (per 100g EP)"
+# FAO returns 403 to urllib's default User-Agent.
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/128.0.0.0 Safari/537.36"
+)
 
 # code -> OnTrack local name(s)
 SELECTED = {
@@ -86,13 +98,43 @@ COLS = {
 }
 
 
-def main(xlsx: Path | None = None) -> None:
+def csv_path() -> Path:
+    return ROOT / "knowledge_base" / "data" / "wafct2019_selected.csv"
+
+
+def download_xlsx(dest: Path) -> None:
+    """Download the WAFCT workbook. FAO blocks the default urllib user agent."""
+    print("Downloading", URL)
+    req = urllib.request.Request(URL, headers={"User-Agent": USER_AGENT})
+    tmp = dest.with_suffix(dest.suffix + ".part")
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp, open(tmp, "wb") as f:
+            shutil.copyfileobj(resp, f)
+        tmp.replace(dest)
+    except Exception:
+        tmp.unlink(missing_ok=True)
+        raise
+
+
+def main(xlsx: Path | None = None, force: bool = False) -> int:
+    out_csv = csv_path()
+    if out_csv.exists() and not force:
+        print(f"WAFCT extract already present ({out_csv.relative_to(ROOT)}); skipping download and rebuild.")
+        return 0
+
     raw = ROOT / "data" / "raw"
     raw.mkdir(parents=True, exist_ok=True)
     xlsx = xlsx or raw / "WAFCT_2019.xlsx"
     if not xlsx.exists():
-        print("Downloading", URL)
-        urllib.request.urlretrieve(URL, xlsx)
+        try:
+            download_xlsx(xlsx)
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            rel = out_csv.relative_to(ROOT)
+            if out_csv.exists():
+                print(f"Warning: could not download {URL} ({e}). Keeping the committed extract at {rel}.")
+                return 0
+            print(f"Error: could not download {URL} ({e}) and {rel} is missing.", file=sys.stderr)
+            return 1
     df = pd.read_excel(xlsx, sheet_name=SHEET, header=None).iloc[3:]
     df = df[list(COLS)].rename(columns=COLS)
     df = df[df["code"].isin(SELECTED)].copy()
@@ -104,7 +146,6 @@ def main(xlsx: Path | None = None) -> None:
     df = df.sort_values("code")
     for c in ["energy_kcal", "protein_g", "fat_g", "carb_available_g", "fibre_g", "sodium_mg", "potassium_mg"]:
         df[c] = df[c].map(lambda v: "" if pd.isna(v) else (f"{v:g}" if isinstance(v, (int, float)) else str(v).strip()))
-    out_csv = ROOT / "knowledge_base" / "data" / "wafct2019_selected.csv"
     df.to_csv(out_csv, index=False)
 
     lines = [
@@ -133,10 +174,12 @@ def main(xlsx: Path | None = None) -> None:
     out_md = ROOT / "knowledge_base" / "docs" / "wafct2019_ghana_foods.md"
     out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Wrote {len(df)} foods -> {out_csv.relative_to(ROOT)} and {out_md.relative_to(ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--xlsx", type=Path, default=None)
+    ap.add_argument("--force", action="store_true", help="re-download and rebuild even if the committed CSV exists")
     a = ap.parse_args()
-    main(a.xlsx)
+    sys.exit(main(a.xlsx, force=a.force))
