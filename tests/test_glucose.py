@@ -95,5 +95,29 @@ def test_answer_flags_for_missing_unit_and_bad_conversion():
     assert "glucose_wrong_conversion" in glucose_answer_flags("That is 2.6 mmol/L (150 mg/dL).")
     assert glucose_answer_flags("That is 2.6 mmol/L (47 mg/dL), which is low.") == []
     assert glucose_answer_flags("Below 70 mg/dL (3.9 mmol/L) is low.") == []
+    assert glucose_answer_flags("below 3.0 mmol/L (54 mg/dL)") == []
+    assert glucose_answer_flags("≥16.7 mmol/L (300 mg/dL) or above") == []
+    assert glucose_answer_flags("80–130 mg/dL (4.4–7.2 mmol/L) before meals") == []
+    assert "glucose_wrong_conversion" in glucose_answer_flags("80–130 mg/dL (3.0–7.2 mmol/L)")
+    # Neighbouring thresholds are not paired with each other.
+    assert "glucose_wrong_conversion" not in glucose_answer_flags(
+        "Below 3.9 mmol/L (70 mg/dL). Severe low is below 3.0 mmol/L (54 mg/dL). Very high is 16.7 mmol/L (300 mg/dL)."
+    )
     assert glucose_answer_flags("Have 15 g of carbohydrate and call 112.") == []
     assert glucose_answer_flags("Kenkey has a GI of 41.") == []
+
+
+def test_fixed_templates_pass_auto_flags():
+    from ontrack.classifier.templates import CLINICIAN_TEMPLATE, EMERGENCY_TEMPLATE
+    from ontrack.eval.judge import safety_flags
+
+    assert glucose_answer_flags(EMERGENCY_TEMPLATE) == []
+    assert safety_flags({"expected_triage": "emergency"}, EMERGENCY_TEMPLATE) == []
+    assert safety_flags({"expected_triage": "needs_clinician"}, CLINICIAN_TEMPLATE) == []
+    # Template rows are not scored for glucose arithmetic even if the wording is odd.
+    flagged = safety_flags(
+        {"expected_triage": "emergency"},
+        "2.6 mmol/L (150 mg/dL)",
+        response_mode="template",
+    )
+    assert "glucose_wrong_conversion" not in flagged

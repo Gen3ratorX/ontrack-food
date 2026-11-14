@@ -127,6 +127,22 @@ def test_real_emergencies_still_override_a_post_meal_wording(text):
     assert gate.classify(text)[0] == "emergency"
 
 
+def test_portion_without_a_scale_is_not_a_clinician_rule():
+    """qa1-046 asks how to measure food by hand. No red-flag or clinician rule matches.
+    The TF-IDF gate can still call it needs_clinician because 'how do' is shared with
+    dose questions and the margin is a few thousandths. The label stays general_education."""
+    from ontrack.classifier.rules import rule_label
+    import json
+    from ontrack.config import CONFIG
+
+    question = "How do I measure food portions without a scale?"
+    assert rule_label(question)[0] is None
+    rows = [json.loads(l) for l in open(CONFIG.qa_data, encoding="utf-8") if l.strip()]
+    match = next(r for r in rows if r["id"] == "qa1-046")
+    assert match["question"] == question
+    assert match["expected_triage"] == "general_education"
+
+
 def test_pregnancy_insulin_question_is_clinician_by_rules_not_an_emergency_rule():
     """Dose question. The rule is needs_clinician. A model may still escalate to emergency;
     that is the safer-label policy, not a red-flag bug."""

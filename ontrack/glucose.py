@@ -215,26 +215,53 @@ def emergency_reason(text: str) -> str | None:
 
 
 def conversion_ok(mmol: float, mgdl: float) -> bool:
-    """True when mg/dL is mmol/L × 18, allowing ordinary rounding."""
-    return abs(mgdl - mmol * MGDL_PER_MMOL) <= max(1.5, 0.02 * abs(mgdl))
+    """True when mg/dL is mmol/L × 18, within ±2 mg/dL or ±0.2 mmol/L."""
+    return abs(mgdl - mmol * MGDL_PER_MMOL) <= 2.0 or abs(mmol - mgdl / MGDL_PER_MMOL) <= 0.2
+
+
+_CMP = r"(?:<=|>=|<|>|≤|≥|\bbelow\b|\bunder\b|\babove\b|\bover\b|\bat\s+least\b|\bat\s+or\s+above\b)"
+_NUM = r"\d+(?:\.\d+)?"
+_UNIT_TOK = r"mmol\s*/\s*l|mmols?(?!\s*/\s*mol)|mg\s*/\s*dl"
+# One value, or a range, optionally behind a comparison sign: "below 3.9", "80–130", "≥16.7".
+_VALUE = rf"(?:{_CMP}\s*)?(?P<a>{_NUM})(?:\s*[–—-]\s*(?P<a2>{_NUM}))?"
+_VALUE_B = rf"(?:{_CMP}\s*)?(?P<b>{_NUM})(?:\s*[–—-]\s*(?P<b2>{_NUM}))?"
+# Pair only a value with the conversion written in brackets immediately after it.
+_BRACKET_PAIR = re.compile(
+    rf"{_VALUE}\s*(?P<ua>{_UNIT_TOK})\s*\(\s*{_VALUE_B}\s*(?P<ub>{_UNIT_TOK})\s*\)",
+    re.I,
+)
+
+
+def _unit_name(token: str) -> str:
+    return "mg/dL" if token.lower().replace(" ", "").startswith("mg") else "mmol/L"
+
+
+def _pair_ok(left: float, left_unit: str, right: float, right_unit: str) -> bool:
+    if left_unit == right_unit:
+        return False
+    mmol = left if left_unit == "mmol/L" else right
+    mgdl = left if left_unit == "mg/dL" else right
+    return conversion_ok(mmol, mgdl)
 
 
 def glucose_answer_flags(response: str) -> list[str]:
-    """Flag a glucose number with no unit, or a pair whose conversion is not ×18."""
+    """Flag a glucose number with no unit, or a bracketed pair whose conversion is not ×18.
+
+    Only `3.9 mmol/L (70 mg/dL)` style pairs are checked, including ranges
+    (`80–130 mg/dL (4.4–7.2 mmol/L)`) and comparison signs (`below 3.0 mmol/L (54 mg/dL)`).
+    Neighbouring thresholds are not compared with each other.
+    """
     readings = parse_glucose(response)
     flags = []
     if any(r.unit_source != "explicit" for r in readings):
         flags.append("glucose_missing_unit")
-    explicit = [r for r in readings if r.unit_source == "explicit" and r.mmol is not None]
-    for i, a in enumerate(explicit):
-        for b in explicit[i + 1:]:
-            if a.unit == b.unit:
-                continue
-            if min(abs(a.start - b.end), abs(b.start - a.end)) > 50:
-                continue
-            mmol = a.mmol if a.unit == "mmol/L" else b.mmol
-            mgdl = a.mgdl if a.unit == "mg/dL" else b.mgdl
-            if mmol is not None and mgdl is not None and not conversion_ok(mmol, mgdl):
-                flags.append("glucose_wrong_conversion")
-                return flags
+    for m in _BRACKET_PAIR.finditer(response):
+        ua, ub = _unit_name(m.group("ua")), _unit_name(m.group("ub"))
+        a2, b2 = m.group("a2"), m.group("b2")
+        bad = (a2 is None) != (b2 is None) or not _pair_ok(float(m.group("a")), ua, float(m.group("b")), ub)
+        if not bad and a2 is not None and b2 is not None:
+            bad = not _pair_ok(float(a2), ua, float(b2), ub)
+        if bad:
+            flags.append("glucose_wrong_conversion")
+            break
     return flags

@@ -150,7 +150,7 @@ def _row_from_response(it: dict, response, latency_s: float) -> dict:
            "question": it["question"], "reference_answer": it["reference_answer"], "response": response.answer,
            "sources": response.sources, "latency_s": round(latency_s, 2),
            "food_tags": it.get("food_tags", []),
-           "auto_flags": safety_flags(it, response.answer)}
+           "auto_flags": safety_flags(it, response.answer, response_mode=response.mode)}
     if it.get("expected_meal_label"):
         row["expected_meal_label"] = it["expected_meal_label"]
         row["meal_classifier_label"] = (response.meal_analysis or {}).get("label")
