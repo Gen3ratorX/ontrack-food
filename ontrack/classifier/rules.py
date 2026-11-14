@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import re
 
+from ..glucose import emergency_reason
+
 EMERGENCY_PATTERNS = [
     r"\b(faint(ed|ing)?|pass(ed)? out|passing out|collaps(e|ed|ing)|unconscious|not (responding|answering|waking)|difficult to wake|won'?t wake)\b",
     # "can't wake him" / "unable to wake her" — not covered by "won't wake" or "difficult to wake"
@@ -51,9 +53,6 @@ def _hypo_cluster(text: str) -> str | None:
     return None
 
 
-# blood glucose value with mmol/L context: <3.0 (level 2) or >= 25 treated as emergency
-_MMOL = re.compile(r"\b(?:sugar|glucose|reading|level|is|was|at|of|dropped to)\D{0,15}(\d{1,2}(?:\.\d)?)\s*(mmol)?", re.I)
-
 CLINICIAN_PATTERNS = [
     r"\b(insulin|metformin|glibenclamide|gliclazide|mixtard|actrapid|ozempic|semaglutide|empagliflozin|dapagliflozin|sitagliptin|dexamethasone|tablets?|medicine|medication|drugs?|dose|doses|dosage|units?)\b",
     r"\bdo i have\b|\bam i diabetic\b|\bconfirm\b.*\bdiabet|\bdiagnos\w*",
@@ -84,13 +83,10 @@ def rule_label(text: str) -> tuple[str | None, str]:
     cluster = _hypo_cluster(t)
     if cluster:
         return "emergency", cluster
-    for m in _MMOL.finditer(text):
-        try:
-            v = float(m.group(1))
-        except ValueError:
-            continue
-        if v < 3.0 and ("low" in t or "sugar" in t or "glucose" in t) or (v >= 25 and v < 60 and ("sugar" in t or "reading" in t or "glucose" in t)):
-            return "emergency", f"rule:glucose_value={v}"
+    # Severe low <3.0 mmol/L (54 mg/dL) or very high >=16.7 mmol/L (300 mg/dL).
+    why = emergency_reason(text)
+    if why:
+        return "emergency", why
     for p in CLINICIAN_PATTERNS:
         if re.search(p, t, flags=re.I):
             return "needs_clinician", f"rule:{p[:40]}"

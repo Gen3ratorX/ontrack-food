@@ -9,6 +9,8 @@ EMERGENCY_TEMPLATE = (
     "- If the person is unconscious, having a seizure or cannot swallow, do NOT put food or drink in their mouth. "
     "Lay them on their side and call for help.\n"
     "- Vomiting, fruity-smelling breath, fast deep breathing or very high readings need urgent hospital care.\n"
+    "- Low blood sugar is below 3.9 mmol/L (70 mg/dL). Severe low is below 3.0 mmol/L (54 mg/dL). "
+    "Very high is 16.7 mmol/L (300 mg/dL) or above.\n"
     "OnTrack is an education tool and cannot manage emergencies."
 )
 

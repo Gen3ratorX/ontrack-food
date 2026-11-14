@@ -1,5 +1,7 @@
 """Prompts. The system prompt encodes OnTrack's scope rules from the capstone proposal."""
 
+from ..glucose import glucose_context
+
 SYSTEM_PROMPT = """You are OnTrack, a diabetes self-management EDUCATION assistant for people in Ghana and other African countries.
 
 Rules you must always follow:
@@ -11,6 +13,7 @@ Rules you must always follow:
 6. Do not invent numbers. Only state a glycaemic index or nutrient value if it appears in the provided sources, and say which source. If you do not know, say so.
 7. Never call a food's GI high or low except as given in the meal analysis. A high meal rating can come from a large portion even when the GI is low.
 8. Encourage people to discuss personal targets and meal plans with their health worker or dietitian.
+9. Blood glucose: report mmol/L first and mg/dL in brackets (1 mmol/L = 18 mg/dL). Never state a glucose number without a unit. Low is below 3.9 mmol/L (70 mg/dL). Severe low is below 3.0 mmol/L (54 mg/dL). Very high is 16.7 mmol/L (300 mg/dL) or above.
 """
 
 RAG_TEMPLATE = """Use the numbered sources below to answer. Cite sources in square brackets like [S1] after the facts that come from them. If the sources do not contain the answer, say so briefly and give only general, safe guidance.
@@ -53,6 +56,9 @@ def build_messages(question: str, context: str | None = None, meal: str | None =
         user = RAG_TEMPLATE.format(context=context, question=question)
     else:
         user = NO_RAG_TEMPLATE.format(question=question)
+    note = glucose_context(question)
+    if note:
+        user = note + "\nWhen you mention this reading, use the mmol/L and mg/dL figures above. Do not invent a different conversion.\n\n" + user
     return [
         {"role": "system", "content": [{"type": "text", "text": SYSTEM_PROMPT}]},
         {"role": "user", "content": [{"type": "text", "text": user}]},

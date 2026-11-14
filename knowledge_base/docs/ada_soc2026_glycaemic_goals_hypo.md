@@ -22,7 +22,7 @@ topic: A1C goals, glucose targets, hypoglycaemia levels
 - Symptoms include shakiness, irritability, confusion, fast heartbeat, sweating and hunger.
 
 ## Treatment principles
-- Glucose is the preferred treatment for a conscious person with glucose below 70 mg/dL; any glucose-containing carbohydrate can be used. Avoid high-fat or high-protein foods for initial treatment. Re-treat after 15 minutes if hypoglycaemia persists (Rec 6.15).
+- Glucose is the preferred treatment for a conscious person with glucose below 70 mg/dL (3.9 mmol/L); any glucose-containing carbohydrate can be used. Avoid high-fat or high-protein foods for initial treatment. Re-treat after 15 minutes if hypoglycaemia persists (Rec 6.15).
 - Glucagon should be prescribed for people taking insulin or at high risk of hypoglycaemia, and family should know how to use it (Rec 6.16).
 
 ## Hyperglycaemic crises
