@@ -5,7 +5,11 @@ EchoGenerator: deterministic stand-in for CPU tests and pipeline smoke runs (no 
 """
 from __future__ import annotations
 
+import gc
+import logging
 import re
+
+log = logging.getLogger(__name__)
 
 
 def _strip_thinking(text: str) -> str:
@@ -14,21 +18,48 @@ def _strip_thinking(text: str) -> str:
     return text.strip()
 
 
-def default_batch_size() -> int:
-    """8 on a T4 (or any GPU with at least 14 GB). Smaller GPUs get a smaller batch."""
+# RAG prompts past this many tokens are batched in pairs so left-padding stays small.
+_LONG_PROMPT_TOKENS = 1024
+
+
+def default_batch_size(max_prompt_tokens: int | None = None, *, load_in_4bit: bool = False) -> int:
+    """T4 float16 starts at 4 (2 when prompts are long or little memory is free).
+
+    4-bit on a T4 stays at 4 as well: the previous default of 8 OOMs during float16 prefill
+    on a 14.5 GiB card, and a smaller batch is the safe shared default.
+    """
     try:
         import torch
     except Exception:
         return 1
     if not torch.cuda.is_available():
         return 1
-    mem_gb = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
+    props = torch.cuda.get_device_properties(0)
+    mem_gb = props.total_memory / (1024 ** 3)
     name = torch.cuda.get_device_name(0).lower()
-    if "t4" in name or mem_gb >= 14:
-        return 8
-    if mem_gb >= 8:
-        return 4
-    return 1
+    free_gb = None
+    try:
+        free, _total = torch.cuda.mem_get_info()
+        free_gb = free / (1024 ** 3)
+    except Exception:
+        free_gb = None
+    t4 = "t4" in name or mem_gb >= 14
+    if t4:
+        bs = 4
+    elif mem_gb >= 8:
+        bs = 4
+    else:
+        bs = 1
+    if load_in_4bit and t4:
+        bs = 4
+    if max_prompt_tokens is not None and max_prompt_tokens >= _LONG_PROMPT_TOKENS:
+        bs = min(bs, 2)
+    if free_gb is not None:
+        if free_gb < 1.5:
+            bs = 1
+        elif free_gb < 3.5:
+            bs = min(bs, 2)
+    return max(1, bs)
 
 
 def prefer_4bit(force: bool | None = None) -> bool:
@@ -77,7 +108,8 @@ class MedGemmaGenerator:
         self.torch_dtype = torch_dtype
         self.model_id = model_id
         self.max_new_tokens = max_new_tokens
-        self.batch_size = batch_size or default_batch_size()
+        self.batch_size = batch_size if batch_size is not None else default_batch_size(load_in_4bit=load_in_4bit)
+        self._oom_logged = False
         self.load_in_4bit = load_in_4bit
         self.processor = AutoProcessor.from_pretrained(model_id)
         tok = self.processor.tokenizer
@@ -92,10 +124,13 @@ class MedGemmaGenerator:
         return self.generate_batch([messages], max_new_tokens=max_new_tokens, batch_size=1)[0]
 
     def _encode(self, batch_messages: list[list[dict]]):
+        # padding belongs in processor_kwargs. Passing it as a direct kwarg makes
+        # transformers warn: "Kwargs passed to processor.__call__ have to be in processor_kwargs dict".
         try:
             inputs = self.processor.apply_chat_template(
                 batch_messages, add_generation_prompt=True, tokenize=True,
-                return_dict=True, return_tensors="pt", padding=True,
+                return_dict=True, return_tensors="pt",
+                processor_kwargs={"padding": True},
             )
         except (TypeError, ValueError):
             texts = [self.processor.apply_chat_template(m, add_generation_prompt=True, tokenize=False)
@@ -108,25 +143,105 @@ class MedGemmaGenerator:
         keep = {k: inputs[k] for k in ("input_ids", "attention_mask") if k in inputs}
         return keep or inputs
 
+    def _release_cuda(self) -> None:
+        gc.collect()
+        if self.torch.cuda.is_available():
+            self.torch.cuda.empty_cache()
+
+    def _fit_batch_to_prompts(self, longest: int) -> None:
+        """Drop to 2 for long RAG prompts, and further if the GPU is already tight."""
+        cap = self.batch_size
+        if longest >= _LONG_PROMPT_TOKENS:
+            cap = min(cap, 2)
+        if self.torch.cuda.is_available():
+            try:
+                free, _total = self.torch.cuda.mem_get_info()
+                free_gb = free / (1024 ** 3)
+            except Exception:
+                free_gb = None
+            if free_gb is not None and free_gb < 1.5:
+                cap = 1
+            elif free_gb is not None and free_gb < 3.5:
+                cap = min(cap, 2)
+        if cap < self.batch_size:
+            log.info("Prompts up to %s tokens; batch size %s -> %s.", longest, self.batch_size, cap)
+            self.batch_size = cap
+
+    def _note_oom(self, new_bs: int) -> None:
+        self.batch_size = new_bs
+        if not self._oom_logged:
+            msg = f"CUDA out of memory; using batch size {new_bs} for the rest of this run."
+            log.warning(msg)
+            print(msg, flush=True)
+            self._oom_logged = True
+
+    def _generate_chunk(self, chunk: list[list[dict]], n_new: int) -> list[str]:
+        inputs = None
+        generated = None
+        try:
+            inputs = self._encode(chunk)
+            n_prompt = int(inputs["input_ids"].shape[-1])
+            pad_id = self.processor.tokenizer.pad_token_id
+            with self.torch.inference_mode():
+                generated = self.model.generate(
+                    **inputs, max_new_tokens=n_new, do_sample=False, pad_token_id=pad_id,
+                )
+            decode = getattr(self.processor, "batch_decode", None) or self.processor.tokenizer.batch_decode
+            return [_strip_thinking(t) for t in decode(generated[:, n_prompt:], skip_special_tokens=True)]
+        except self.torch.cuda.OutOfMemoryError:
+            inputs = None
+            generated = None
+            self._release_cuda()
+            raise
+        finally:
+            inputs = None
+            generated = None
+            gc.collect()
+
     def generate_batch(self, batch_messages: list[list[dict]], max_new_tokens: int | None = None,
                        batch_size: int | None = None) -> list[str]:
-        """Generate one completion per conversation. Left-padded, in chunks of `batch_size`."""
+        """Generate one completion per conversation.
+
+        Prompts are sorted by length so left-padding is not dominated by one long RAG prompt.
+        On CUDA OOM the chunk is retried at half the batch size, down to 1, and that size is kept.
+        """
         if not batch_messages:
             return []
-        bs = batch_size or self.batch_size
         n_new = max_new_tokens or self.max_new_tokens
-        decode = getattr(self.processor, "batch_decode", None) or self.processor.tokenizer.batch_decode
-        pad_id = self.processor.tokenizer.pad_token_id
-        outs: list[str] = []
-        for i in range(0, len(batch_messages), bs):
-            chunk = batch_messages[i:i + bs]
-            inputs = self._encode(chunk)
-            n_prompt = inputs["input_ids"].shape[-1]
-            with self.torch.inference_mode():
-                gen = self.model.generate(**inputs, max_new_tokens=n_new, do_sample=False, pad_token_id=pad_id)
-            texts = decode(gen[:, n_prompt:], skip_special_tokens=True)
-            outs.extend(_strip_thinking(t) for t in texts)
-        return outs
+        lengths = []
+        for messages in batch_messages:
+            ids = self._encode([messages])["input_ids"]
+            lengths.append(int(ids.shape[-1]))
+            del ids
+        self._fit_batch_to_prompts(max(lengths) if lengths else 0)
+        requested = batch_size if batch_size is not None else self.batch_size
+        bs = max(1, min(requested, self.batch_size))
+        order = sorted(range(len(batch_messages)), key=lambda i: (lengths[i], i))
+        ordered = [batch_messages[i] for i in order]
+        results: list[str | None] = [None] * len(batch_messages)
+        index = 0
+        saw_oom = False
+        while index < len(ordered):
+            this = min(bs, len(ordered) - index)
+            chunk = ordered[index:index + this]
+            try:
+                texts = self._generate_chunk(chunk, n_new)
+            except self.torch.cuda.OutOfMemoryError:
+                if this == 1:
+                    raise
+                bs = max(1, this // 2)
+                self.batch_size = bs
+                saw_oom = True
+                continue
+            if saw_oom:
+                self._note_oom(bs)
+                saw_oom = False
+            if len(texts) != len(chunk):
+                raise RuntimeError(f"generate_batch returned {len(texts)} texts for {len(chunk)} prompts")
+            for offset, text in enumerate(texts):
+                results[order[index + offset]] = text
+            index += this
+        return [t if t is not None else "" for t in results]
 
 
 class EchoGenerator:

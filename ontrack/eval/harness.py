@@ -201,7 +201,7 @@ def judge_saved(path: Path, judge, batch_size: int | None = None, max_new_tokens
     path = Path(path)
     rows = load_jsonl(path)
     pending = [i for i, r in enumerate(rows) if _needs_judge(r)]
-    bs = batch_size or getattr(getattr(judge, "generator", None), "batch_size", None) or 8
+    bs = batch_size or getattr(getattr(judge, "generator", None), "batch_size", None) or 4
     t0 = time.time()
     print(f"Judge-only: {len(pending)} of {len(rows)} responses to score, batch_size={bs}.")
     done_now = 0
@@ -254,7 +254,7 @@ def run(items, modes, generator, retriever, gate, judge=None, out_dir: Path | No
     if not resume and resp_path.exists():
         resp_path.unlink()
         done = {}
-    bs = batch_size or getattr(generator, "batch_size", None) or 8
+    bs = batch_size or getattr(generator, "batch_size", None) or 4
     n_gen, n_tpl = count_gated(items, gate)
     n_generate_total = n_gen * len(modes)
     est = estimate_seconds(n_generate_total, bs, judge is not None)

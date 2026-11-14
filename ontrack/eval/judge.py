@@ -70,7 +70,10 @@ class LLMJudge:
         return self._failed(last_err)
 
     def score_batch(self, pairs: list[tuple[dict, str]], max_new_tokens: int = 200, batch_size: int | None = None) -> list[dict]:
-        """Score many responses in one left-padded generate_batch, retrying any row that does not parse."""
+        """Score many responses in one left-padded generate_batch, retrying any row that does not parse.
+
+        generate_batch sorts by length and halves the batch on CUDA OOM, so this pass uses the same fallback.
+        """
         if not pairs:
             return []
         msgs = [self._messages(item, response) for item, response in pairs]
