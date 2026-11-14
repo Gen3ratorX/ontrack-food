@@ -50,6 +50,43 @@ def test_gate_never_downgrades_emergency_rule(gate):
     assert gate.classify("my child is unconscious, should I give insulin?")[0] == "emergency"
 
 
+# Reported as happening now. Rules alone must call these emergency; the TF-IDF model is not consulted.
+@pytest.mark.parametrize("text", [
+    "shaking, sweating, confused",
+    "dizzy and sweating",
+    "trembling",
+    "confusion",
+    "fainting",
+    "he passed out",
+    "blurred vision with sweating",
+    "can't wake him",
+    "she is having a seizure",
+    "he is having fits",
+    "my body is shaking and I'm sweating",
+    "feeling weak and confused",
+    "Chale, my body is shaking and I am sweating",
+])
+def test_hypo_red_flags_are_emergency_by_rules_alone(text):
+    label, why = SafetyGate().classify(text, use_model=False)
+    assert label == "emergency", why
+    assert why.startswith("rule:")
+
+
+@pytest.mark.parametrize("text", [
+    "I sweat after exercise",
+    "I sweat a lot when I walk in the Accra sun",
+    "I'm confused about the plate method",
+    "Which meal fits a diabetic plate?",
+    "My eyes are blurry, is it diabetic retinopathy?",
+    "I feel dizzy if I stand up too fast",
+    "I am shaking the bottle of sobolo",
+    "What are the signs of low blood sugar?",
+])
+def test_benign_mentions_are_not_emergency_by_rules_alone(text):
+    label, why = SafetyGate().classify(text, use_model=False)
+    assert label == "general_education", why
+
+
 def test_assistant_uses_template_when_gated(gate):
     from ontrack.pipeline import OnTrackAssistant
     from ontrack.rag.generator import EchoGenerator
