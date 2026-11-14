@@ -66,7 +66,7 @@ user question
 3. Create a Hugging Face read token and add it to Colab Secrets as `HF_TOKEN`.
 4. Open `notebooks/OnTrack_quickstart.ipynb` and run it from top to bottom.
 
-On a T4, MedGemma loads in 4-bit NF4 with **float16** compute, because the T4 has no native bfloat16 (set `ONTRACK_4BIT=0` to load the full fp16 weights, about 8 GB).
+On a T4 (about 15 GB), load MedGemma in **float16** (about 8.6 GB). That fits and is faster than bitsandbytes 4-bit. Use 4-bit only when the GPU has under 14 GB, or pass `--4bit`. The T4 has no native bfloat16, so float16 is the full-precision dtype.
 
 ### Local CPU (retrieval, classifier, tests; no MedGemma)
 ```bash
@@ -89,12 +89,14 @@ python scripts/make_food_lexicon.py            # regenerate knowledge_base/data/
 python scripts/make_meal_dataset.py            # regenerate the synthetic meal dataset
 python -m ontrack.meal.learned                 # TF-IDF + LR: CV + hard-case comparison -> artifacts/meal_tfidf_lr.*
 python -m ontrack.eval.meal_eval               # engine: food recognition P/R/F1 + label accuracy per split
-python -m ontrack.eval.harness --split meals --generator medgemma --judge llm  # meal Q&A set, RAG vs no-RAG
+python -m ontrack.eval.harness --split meals --quick --generator medgemma --fp16  # meal Q&A, no judge
 
 python -m ontrack.eval.split --n-test 60       # stratified hold-out of 60 (pass several --data files as batches grow)
-python -m ontrack.eval.harness --generator echo --judge heuristic          # CPU smoke test of the harness
-python -m ontrack.eval.harness --generator medgemma --judge llm            # GPU: RAG vs no-RAG + LLM judge
-python -m ontrack.eval.harness --generator medgemma --no-gate              # ablation: raw model safety without the gate
+python -m ontrack.eval.harness --generator echo --judge heuristic --limit 10   # CPU smoke test
+python -m ontrack.eval.harness --quick --generator medgemma --fp16 --drive      # 20 items, both modes, no judge, resumable
+python -m ontrack.eval.harness --generator medgemma --fp16 --max-new-tokens 256 --judge none --out artifacts/runs/full
+python -m ontrack.eval.harness --judge-only artifacts/runs/full/responses.jsonl --judge llm --fp16
+python -m ontrack.eval.harness --generator medgemma --fp16 --no-gate            # ablation: raw model, no triage gate
 python -m ontrack.eval.harness --score-human artifacts/runs/<run>/human_scoring.csv
 
 python -m ontrack.cli "Is waakye okay for breakfast?" --mode rag           # GPU chat

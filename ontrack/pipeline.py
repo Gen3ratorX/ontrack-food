@@ -26,6 +26,19 @@ class AssistantResponse:
         return asdict(self)
 
 
+@dataclass
+class PreparedAnswer:
+    """Either a finished template response, or messages waiting for a (possibly batched) generate call."""
+    question: str
+    triage_label: str
+    triage_reason: str
+    done: AssistantResponse | None = None
+    messages: list | None = None
+    mode: str = "template"
+    sources: list = field(default_factory=list)
+    meal_analysis: dict | None = None
+
+
 class OnTrackAssistant:
     def __init__(self, generator, retriever: Retriever | None = None, gate: SafetyGate | None = None, use_rag: bool = True,
                  classify_meals: bool = True):
@@ -46,12 +59,14 @@ class OnTrackAssistant:
             return None
         return self._meal.analyse(question)
 
-    def answer(self, question: str) -> AssistantResponse:
+    def prepare(self, question: str) -> PreparedAnswer:
+        """Gate first. Emergency and clinician questions are fixed templates and do not need generation."""
         label, reason = ("general_education", "gate disabled")
         if self.gate is not None:
             label, reason = self.gate.classify(question)
             if label != "general_education":
-                return AssistantResponse(question, template_for(label), "template", label, reason)
+                done = AssistantResponse(question, template_for(label), "template", label, reason)
+                return PreparedAnswer(question, label, reason, done=done)
         if self.use_rag:
             meal = self.analyse_meal(question) if self.classify_meals else None
             query = question
@@ -59,10 +74,22 @@ class OnTrackAssistant:
                 query = question + " " + " ".join(sorted({i.name.split(":")[0].split("(")[0] for i in meal.items}))
             hits = self.retriever.search(query)
             msgs = build_messages(question, format_context(hits), meal.to_context() if meal is not None else None)
-            text = self.generator.generate(msgs)
             srcs = [{"ref": f"S{i}", "doc_id": h.doc_id, "title": h.title, "url": h.url, "score": round(h.score, 3)} for i, h in enumerate(hits, 1)]
+            meal_dict = None
             if meal is not None:
                 srcs += [{"ref": "M", "doc_id": s["id"], "title": s["title"], "url": s["url"], "score": None} for s in meal.sources]
-            return AssistantResponse(question, text, "rag", label, reason, srcs, meal.to_dict() if meal is not None else None)
-        text = self.generator.generate(build_messages(question, None))
-        return AssistantResponse(question, text, "no_rag", label, reason)
+                meal_dict = meal.to_dict()
+            return PreparedAnswer(question, label, reason, messages=msgs, mode="rag", sources=srcs, meal_analysis=meal_dict)
+        return PreparedAnswer(question, label, reason, messages=build_messages(question, None), mode="no_rag")
+
+    def complete(self, prepared: PreparedAnswer, text: str | None = None) -> AssistantResponse:
+        if prepared.done is not None:
+            return prepared.done
+        return AssistantResponse(prepared.question, text or "", prepared.mode, prepared.triage_label,
+                                 prepared.triage_reason, prepared.sources, prepared.meal_analysis)
+
+    def answer(self, question: str) -> AssistantResponse:
+        prepared = self.prepare(question)
+        if prepared.done is not None:
+            return prepared.done
+        return self.complete(prepared, self.generator.generate(prepared.messages))
