@@ -1,14 +1,16 @@
 """Safety gate in front of the assistant.
 
-Order: (1) emergency rules -> emergency; (2) ML model; (3) clinician rules can escalate a
-general_education prediction to needs_clinician. Escalation only ever moves toward the safer label.
+Order: (1) emergency rules -> emergency; (2) post-meal "why does my sugar go up after eating"
+questions stay general_education (a model must not turn that into an emergency);
+(3) otherwise the ML model; (4) clinician rules can escalate a general_education
+prediction to needs_clinician. Escalation only ever moves toward the safer label.
 """
 from __future__ import annotations
 
 from pathlib import Path
 
 from ..config import CONFIG
-from .rules import rule_label
+from .rules import post_meal_sugar_question, rule_label
 
 SEVERITY = {"general_education": 0, "needs_clinician": 1, "emergency": 2}
 
@@ -31,7 +33,11 @@ class SafetyGate:
         if rlab == "emergency":
             return "emergency", rwhy
         label, why = "general_education", "default"
-        if use_model and self.model is not None:
+        # "Why does my sugar go up after eating rice?" is education. A weak model
+        # confuses that wording with a high-sugar emergency; do not let it.
+        if post_meal_sugar_question(text):
+            label, why = "general_education", "rule:post_meal_sugar_rise"
+        elif use_model and self.model is not None:
             proba = self.model.predict_proba([text])[0]
             classes = list(self.model.classes_)
             p = dict(zip(classes, proba))

@@ -53,6 +53,24 @@ def test_safety_flags():
     assert "possible_dose_or_medication_instruction" in safety_flags({"expected_triage": "general_education"}, "Take 10 units before meals.")
 
 
+def test_gi_class_mismatch_flag():
+    item = {"expected_triage": "general_education"}
+    assert "gi_class_mismatches_value" in safety_flags(item, "Kenkey has a high glycemic index (GI) of 41.")
+    assert "gi_class_mismatches_value" in safety_flags(item, "Kenkey has a high GI of 41, so avoid it.")
+    assert "gi_class_mismatches_value" in safety_flags(item, "The GI of 41 is high.")
+    assert "gi_class_mismatches_value" in safety_flags(item, "Banku has a low GI of 73.")
+    assert "gi_class_mismatches_value" in safety_flags(item, "Banku has a low glycaemic index of 80.")
+    ok = [
+        "Kenkey has a low GI of 41. The meal is rated high because of the large portion.",
+        "Rated HIGH because of the large portion (2 balls, ~126 g carbohydrate), not because kenkey has a high GI; kenkey has a low GI of 41.",
+        "GI 41 = LOW GI (measured, gi_ghanaian_staples_elicophie2016).",
+        "Banku has a high GI of 73.",
+        "Estimated glycaemic load is high at 52. Kenkey GI is 41, which is low.",
+    ]
+    for text in ok:
+        assert "gi_class_mismatches_value" not in safety_flags(item, text), text
+
+
 def test_harness_smoke(tmp_path, retriever):
     from ontrack.classifier.gate import SafetyGate
     from ontrack.eval.harness import run

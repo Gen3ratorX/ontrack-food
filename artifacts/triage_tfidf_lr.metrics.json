@@ -73,9 +73,9 @@
   "holdout_rules_only": {
     "report": {
       "general_education": {
-        "precision": 0.9444444444444444,
+        "precision": 1.0,
         "recall": 1.0,
-        "f1-score": 0.9714285714285714,
+        "f1-score": 1.0,
         "support": 17.0
       },
       "needs_clinician": {
@@ -86,21 +86,21 @@
       },
       "emergency": {
         "precision": 1.0,
-        "recall": 0.9166666666666666,
-        "f1-score": 0.9565217391304348,
+        "recall": 1.0,
+        "f1-score": 1.0,
         "support": 12.0
       },
-      "accuracy": 0.975,
+      "accuracy": 1.0,
       "macro avg": {
-        "precision": 0.9814814814814815,
-        "recall": 0.9722222222222222,
-        "f1-score": 0.975983436853002,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
         "support": 40.0
       },
       "weighted avg": {
-        "precision": 0.976388888888889,
-        "recall": 0.975,
-        "f1-score": 0.9748136645962733,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
         "support": 40.0
       }
     },
@@ -122,22 +122,22 @@
           0
         ],
         [
-          1,
           0,
-          11
+          0,
+          12
         ]
       ]
     },
-    "accuracy": 0.975,
-    "macro_f1": 0.975983436853002,
-    "emergency_recall": 0.9166666666666666
+    "accuracy": 1.0,
+    "macro_f1": 1.0,
+    "emergency_recall": 1.0
   },
   "holdout_gate_rules_plus_model": {
     "report": {
       "general_education": {
         "precision": 1.0,
-        "recall": 0.9411764705882353,
-        "f1-score": 0.9696969696969697,
+        "recall": 1.0,
+        "f1-score": 1.0,
         "support": 17.0
       },
       "needs_clinician": {
@@ -147,22 +147,22 @@
         "support": 11.0
       },
       "emergency": {
-        "precision": 0.8571428571428571,
+        "precision": 0.9230769230769231,
         "recall": 1.0,
-        "f1-score": 0.9230769230769231,
+        "f1-score": 0.96,
         "support": 12.0
       },
-      "accuracy": 0.95,
+      "accuracy": 0.975,
       "macro avg": {
-        "precision": 0.9523809523809524,
-        "recall": 0.9500891265597148,
-        "f1-score": 0.9483849483849484,
+        "precision": 0.9743589743589745,
+        "recall": 0.9696969696969697,
+        "f1-score": 0.9707936507936509,
         "support": 40.0
       },
       "weighted avg": {
-        "precision": 0.9571428571428571,
-        "recall": 0.95,
-        "f1-score": 0.9509490509490508,
+        "precision": 0.976923076923077,
+        "recall": 0.975,
+        "f1-score": 0.9749047619047619,
         "support": 40.0
       }
     },
@@ -174,9 +174,9 @@
       ],
       "matrix": [
         [
-          16,
+          17,
           0,
-          1
+          0
         ],
         [
           0,
@@ -190,8 +190,8 @@
         ]
       ]
     },
-    "accuracy": 0.95,
-    "macro_f1": 0.9483849483849484,
+    "accuracy": 0.975,
+    "macro_f1": 0.9707936507936509,
     "emergency_recall": 1.0
   },
   "cv5_model_only": {
@@ -259,9 +259,9 @@
   "cv5_gate_rules_plus_model": {
     "report": {
       "general_education": {
-        "precision": 0.9841269841269841,
-        "recall": 0.9117647058823529,
-        "f1-score": 0.9465648854961832,
+        "precision": 0.984375,
+        "recall": 0.9264705882352942,
+        "f1-score": 0.9545454545454546,
         "support": 68.0
       },
       "needs_clinician": {
@@ -271,22 +271,22 @@
         "support": 45.0
       },
       "emergency": {
-        "precision": 0.9183673469387755,
+        "precision": 0.9375,
         "recall": 1.0,
-        "f1-score": 0.9574468085106383,
+        "f1-score": 0.967741935483871,
         "support": 45.0
       },
-      "accuracy": 0.9367088607594937,
+      "accuracy": 0.9430379746835443,
       "macro avg": {
-        "precision": 0.9312662262972822,
-        "recall": 0.940958605664488,
-        "f1-score": 0.935036865035241,
+        "precision": 0.9377264492753623,
+        "recall": 0.9458605664488018,
+        "f1-score": 0.9411287637094089,
         "support": 158.0
       },
       "weighted avg": {
-        "precision": 0.9389611467408464,
-        "recall": 0.9367088607594937,
-        "f1-score": 0.9367149945960109,
+        "precision": 0.9445170610897082,
+        "recall": 0.9430379746835443,
+        "f1-score": 0.9430818262994661,
         "support": 158.0
       }
     },
@@ -298,9 +298,9 @@
       ],
       "matrix": [
         [
-          62,
+          63,
           5,
-          1
+          0
         ],
         [
           1,
@@ -314,8 +314,8 @@
         ]
       ]
     },
-    "accuracy": 0.9367088607594937,
-    "macro_f1": 0.935036865035241,
+    "accuracy": 0.9430379746835443,
+    "macro_f1": 0.9411287637094089,
     "emergency_recall": 1.0
   },
   "note": "Synthetic seed data; metrics are optimistic and only show the pipeline works.",
@@ -323,11 +323,6 @@
     {
       "text": "I am pregnant and diabetic, how much insulin do I need now?",
       "true": "needs_clinician",
-      "gate": "emergency"
-    },
-    {
-      "text": "Why does my sugar go up after eating rice?",
-      "true": "general_education",
       "gate": "emergency"
     }
   ]

@@ -162,8 +162,8 @@ Environment overrides: `ONTRACK_MODEL_ID`, `ONTRACK_4BIT`, `ONTRACK_MAX_NEW_TOKE
   | Setting | Accuracy | Macro-F1 | Emergency recall |
   |---|---|---|---|
   | TF-IDF + LR alone, 5-fold CV | 0.867 | 0.863 | 0.911 |
-  | Gate (rules + model), 5-fold CV | 0.937 | 0.935 | **1.000** |
-  | Gate (rules + model), 25% holdout (n = 40) | 0.950 | 0.948 | 1.000 |
+  | Gate (rules + model), 5-fold CV | 0.943 | 0.941 | **1.000** |
+  | Gate (rules + model), 25% holdout (n = 40) | 0.975 | 0.971 | 1.000 |
 
   These numbers are **optimistic**: the data is synthetic and the red-flag rules were written while looking at it. In the CV confusion matrix (rows = true labels: general, clinician, emergency), the row for true needs_clinician was 1 / 41 / 3. That means one needs_clinician question was let through as general_education. This is the direction to watch.
 - **Retrieval:** hit@5 of a cited source on 83 answerable Q&A items was **0.928** for hybrid retrieval and 0.867 for dense-only.

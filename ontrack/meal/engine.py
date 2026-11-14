@@ -14,6 +14,7 @@ No GI number is ever created here: GI values come only from the lexicon, whose v
 """
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from functools import lru_cache
 
@@ -52,6 +53,72 @@ def _up(level: str) -> str:
 
 def _down(level: str) -> str:
     return LEVELS[max(LEVELS.index(level) - 1, 0)]
+
+
+def _gi_phrase(gi: float, gi_type: str | None, gi_source: str | None) -> str:
+    """GI number with its class, so a high meal rating cannot be read as a high GI."""
+    kind = gi_type or "cited"
+    src = gi_source or "cited source"
+    return f"GI {gi:g} = {gi_level(gi).upper()} GI ({kind}, {src})"
+
+
+def _portion_phrase(it: "ItemAnalysis") -> str:
+    desc = it.portion_desc.strip()
+    m = re.match(r"^(\d+(?:\.\d+)?) (.+)$", desc)
+    if m:
+        n = float(m.group(1))
+        unit = m.group(2)
+        if n > 1 and not unit.endswith("s"):
+            unit += "s"
+        num = str(int(n)) if n.is_integer() else f"{n:g}"
+        desc = f"{num} {unit}"
+    if it.carb_g is not None:
+        return f"{desc}, ~{it.carb_g:.0f} g carbohydrate"
+    return desc
+
+
+def _large_portion(it: "ItemAnalysis") -> bool:
+    if it.carb_g is not None and it.carb_g >= 60:
+        return True
+    if re.search(r"\blarge\b", it.portion_desc):
+        return True
+    m = re.match(r"^(\d+(?:\.\d+)?)", it.portion_desc)
+    return bool(m and float(m.group(1)) >= 2)
+
+
+def _plain_rating_reason(a: "MealAnalysis") -> str:
+    """One plain sentence for why the meal rating is what it is. GI class is named separately."""
+    if a.label not in LEVELS:
+        return ""
+    label = a.label.upper()
+    starch = [i for i in a.items if i.category in CARB_CATEGORIES]
+    # Meal impact above the food's own GI class: the portion / GL did it, not a high GI.
+    lower = [i for i in starch if i.gi is not None and LEVELS.index(gi_level(i.gi)) < LEVELS.index(a.label)]
+    if lower:
+        sentences = []
+        for i in lower:
+            size = "large portion" if _large_portion(i) else "portion"
+            sentences.append(
+                f"Rated {label} because of the {size} ({_portion_phrase(i)}), "
+                f"not because {i.name} has a high GI; {i.name} has a {gi_level(i.gi)} GI."
+            )
+        return " ".join(sentences)
+    with_gi = [i for i in starch if i.gi is not None]
+    if "composition" in a.basis and with_gi:
+        bits = [f"{i.name} has a {gi_level(i.gi)} GI ({i.gi:g})" for i in with_gi]
+        return (f"Rated {label} after moderating foods lowered the meal. "
+                + "; ".join(bits) + ". Do not describe the GI as lower than that.")
+    if with_gi and all(i.basis == "gi_class" or i.carb_g is None for i in with_gi):
+        bits = [f"{i.name} has a {gi_level(i.gi)} GI ({_gi_phrase(i.gi, i.gi_type, i.gi_source)})" for i in with_gi]
+        return f"Rated {label} because " + "; ".join(bits) + ". This follows the GI class."
+    if with_gi:
+        bits = [f"{i.name} {_gi_phrase(i.gi, i.gi_type, i.gi_source)}" for i in with_gi]
+        return f"Rated {label} from glycaemic load or carbohydrate, and the GI class agrees: " + "; ".join(bits) + "."
+    carb_bits = [f"{i.name}: {_portion_phrase(i)}" for i in starch if i.carb_g is not None]
+    if carb_bits:
+        return (f"Rated {label} because of the carbohydrate in the portion ({'; '.join(carb_bits)}). "
+                "No cited GI is given, so do not call the GI high or low.")
+    return f"Rated {label} from the meal composition, not from a glycaemic index."
 
 
 @lru_cache(maxsize=1)
@@ -111,6 +178,9 @@ class MealAnalysis:
         """Compact block for the RAG prompt. Numbers here must be kept as-is by the generator."""
         lines = [f"[M] OnTrack meal analysis (rule engine; estimates, not a diagnosis)",
                  f"Rating: {self.label.upper()} expected blood-sugar impact (basis: {self.basis}; confidence: {self.confidence})"]
+        reason = _plain_rating_reason(self)
+        if reason:
+            lines.append(reason)
         if self.est_glycaemic_load is not None:
             lines.append(f"Estimated glycaemic load (estimate, from cited GI x WAFCT carbohydrate, assumed portions): {self.est_glycaemic_load:.0f}")
         no_carb = [i.name for i in self.items if i.category in CARB_CATEGORIES and i.carb_g is None]
@@ -124,11 +194,11 @@ class MealAnalysis:
             if it.carb_g is not None:
                 bits.append(f"carb {it.carb_g:.0f} g (WAFCT {it.wafct_code}{', proxy' if it.wafct_proxy else ''})")
             if it.gi is not None:
-                bits.append(f"GI {it.gi:g} ({it.gi_type}, {it.gi_source})")
+                bits.append(_gi_phrase(it.gi, it.gi_type, it.gi_source))
             if it.est_gl is not None:
                 bits.append(f"est. GL {it.est_gl:.0f}")
             if it.level:
-                bits.append(f"{it.level} via {it.basis}")
+                bits.append(f"impact {it.level} via {it.basis} (not the GI class)")
             else:
                 bits.append("no GI or carbohydrate data")
             lines.append("- " + "; ".join(bits))
@@ -293,10 +363,11 @@ class MealClassifier:
         if not key:  # several small carbohydrate portions that add up
             key = [i for i in rated if i.category in CARB_CATEGORIES]
         for i in key:
-            if True:
-                d = f"{i.name} ({i.level}"
-                d += f", est. GL {i.est_gl:.0f}" if i.est_gl is not None else (f", ~{i.carb_g:.0f} g carb" if i.carb_g is not None else f", GI {i.gi:g}")
-                drivers.append(d + ")")
+            d = f"{i.name} (impact {i.level} via {i.basis}"
+            if i.gi is not None:
+                d += f"; {_gi_phrase(i.gi, i.gi_type, i.gi_source)}"
+            d += f", est. GL {i.est_gl:.0f}" if i.est_gl is not None else (f", ~{i.carb_g:.0f} g carb" if i.carb_g is not None else "")
+            drivers.append(d + ")")
         # flags
         if gi_items:
             flags.append("GI-only rating for " + ", ".join(i.name for i in gi_items) + ": no WAFCT carbohydrate value, so portion size could not be "

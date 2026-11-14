@@ -151,6 +151,18 @@ def test_context_block_marks_estimates(mc):
     assert ctx.startswith("[M]") and "estimate" in ctx and "Sources:" in ctx
 
 
+def test_kenkey_context_says_low_gi_and_blames_the_portion(mc):
+    ctx = mc.analyse("2 balls of kenkey with fried fish and shito").to_context()
+    assert "GI 41 = LOW GI" in ctx
+    assert "Rated HIGH because of the large portion (2 balls, ~126 g carbohydrate)" in ctx
+    assert "not because kenkey has a high GI" in ctx
+    from ontrack.rag.prompts import SYSTEM_PROMPT, build_messages
+    assert "Never call a food's GI high or low except as given" in SYSTEM_PROMPT
+    prompt = build_messages("2 balls of kenkey with fried fish and shito", context="[S1] test", meal=ctx)[-1]["content"][0]["text"]
+    assert "Never call a food's GI high or low except as given in the analysis" in prompt
+    assert "LOW GI" in prompt and "large portion" in prompt
+
+
 # ---------------- pipeline integration ----------------
 def test_pipeline_adds_meal_analysis_after_gate(retriever):
     from ontrack.classifier.gate import SafetyGate

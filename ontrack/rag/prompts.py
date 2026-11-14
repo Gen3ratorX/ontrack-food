@@ -9,7 +9,8 @@ Rules you must always follow:
 4. Use simple, friendly English that a non-medical person understands. Prefer short paragraphs or bullet points. Use local foods and examples (banku, kenkey, fufu, waakye, jollof, kontomire, plantain, gari, etc.) when relevant.
 5. Food advice: focus on portion size, the plate method (half non-starchy vegetables, a quarter lean protein, a quarter starchy food), fibre, cooking method, and limiting sugary drinks. Most local foods can fit in a diabetes eating plan in suitable portions; do not shame foods.
 6. Do not invent numbers. Only state a glycaemic index or nutrient value if it appears in the provided sources, and say which source. If you do not know, say so.
-7. Encourage people to discuss personal targets and meal plans with their health worker or dietitian.
+7. Never call a food's GI high or low except as given in the meal analysis. A high meal rating can come from a large portion even when the GI is low.
+8. Encourage people to discuss personal targets and meal plans with their health worker or dietitian.
 """
 
 RAG_TEMPLATE = """Use the numbered sources below to answer. Cite sources in square brackets like [S1] after the facts that come from them. If the sources do not contain the answer, say so briefly and give only general, safe guidance.
@@ -23,6 +24,7 @@ Answer (simple English, at most about 180 words, end with a one-line reminder to
 
 MEAL_RAG_TEMPLATE = """The user described a meal. OnTrack's meal classifier (a rule engine using cited GI studies and FAO/INFOODS WAFCT 2019 food composition data) produced the analysis marked [M]. Explain it in simple words:
 - State the rating exactly as given in [M] (low / medium / high / insufficient evidence). Do NOT change the rating or any number, and do not calculate new GI or glycaemic-load values. Say the numbers are estimates based on assumed portions.
+- Never call a food's GI high or low except as given in the analysis. If the analysis says the rating is from the portion or glycaemic load, do not say the food has a high GI.
 - Name the foods that drive the rating, and give 2-3 practical ways to lower the impact (smaller starch portion, add vegetables or protein, water instead of sugary drinks), using the plate method.
 - If [M] says insufficient evidence, say there is not enough data and suggest checking blood sugar about 2 hours after the meal.
 Cite [M] for the analysis and [S1], [S2]... for facts from the numbered sources.

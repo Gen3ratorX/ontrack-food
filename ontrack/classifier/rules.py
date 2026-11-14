@@ -62,6 +62,20 @@ CLINICIAN_PATTERNS = [
 ]
 
 
+# Ordinary questions about sugar rising after a meal are education, not a crisis.
+# Emergency rules (very high readings, vomiting, fruity breath, confusion, etc.) are checked first.
+_POST_MEAL_SUGAR = re.compile(
+    r"\b(?:why|how come|what makes|does|do|can|is it normal)\b.{0,80}\b(?:blood\s+)?(?:sugar|glucose)\b.{0,50}\b(?:go(?:es|ing)?\s+up|rise[sd]?|rising|increase[sd]?|spike[sd]?)\b"
+    r"|"
+    r"\b(?:blood\s+)?(?:sugar|glucose)\b.{0,40}\b(?:go(?:es|ing)?\s+up|rise[sd]?|rising|increase[sd]?|spike[sd]?)\b.{0,50}\b(?:after|when)\b.{0,40}\b(?:eat(?:ing)?|food|a meal|meal|rice|kenkey|fufu|banku|jollof)\b",
+    re.I | re.S,
+)
+
+
+def post_meal_sugar_question(text: str) -> bool:
+    return _POST_MEAL_SUGAR.search(text) is not None
+
+
 def rule_label(text: str) -> tuple[str | None, str]:
     t = text.lower()
     for p in EMERGENCY_PATTERNS:

@@ -87,6 +87,56 @@ def test_benign_mentions_are_not_emergency_by_rules_alone(text):
     assert label == "general_education", why
 
 
+class _FixedProba:
+    """Stand-in classifier so a test can force an emergency prediction."""
+
+    classes_ = ["general_education", "needs_clinician", "emergency"]
+
+    def __init__(self, proba):
+        import numpy as np
+        self._p = np.array(proba, dtype=float)
+
+    def predict_proba(self, texts):
+        import numpy as np
+        return np.tile(self._p, (len(texts), 1))
+
+
+@pytest.mark.parametrize("text", [
+    "Why does my sugar go up after eating rice?",
+    "Why does my blood sugar rise after eating?",
+    "Does my sugar go up after I eat fufu?",
+    "My sugar goes up after eating kenkey",
+])
+def test_post_meal_sugar_questions_stay_general_even_if_model_says_emergency(text):
+    from ontrack.classifier.rules import rule_label
+    assert rule_label(text)[0] != "emergency"
+    gate = SafetyGate(model=_FixedProba([0.05, 0.10, 0.85]))
+    label, why = gate.classify(text)
+    assert label == "general_education", why
+    assert why == "rule:post_meal_sugar_rise"
+
+
+@pytest.mark.parametrize("text", [
+    "I'm vomiting, my breath smells fruity and I'm breathing fast",
+    "My sugar reading is 30 mmol/L and I feel drowsy",
+    "shaking, sweating, confused",
+    "Why does my sugar go up after eating rice? I can't wake him",
+])
+def test_real_emergencies_still_override_a_post_meal_wording(text):
+    gate = SafetyGate(model=_FixedProba([0.9, 0.05, 0.05]))
+    assert gate.classify(text)[0] == "emergency"
+
+
+def test_pregnancy_insulin_question_is_clinician_by_rules_not_an_emergency_rule():
+    """Dose question. The rule is needs_clinician. A model may still escalate to emergency;
+    that is the safer-label policy, not a red-flag bug."""
+    from ontrack.classifier.rules import rule_label
+    text = "I am pregnant and diabetic, how much insulin do I need now?"
+    assert rule_label(text)[0] == "needs_clinician"
+    assert SafetyGate().classify(text, use_model=False)[0] == "needs_clinician"
+    assert SafetyGate(model=_FixedProba([0.05, 0.15, 0.80])).classify(text)[0] == "emergency"
+
+
 def test_assistant_uses_template_when_gated(gate):
     from ontrack.pipeline import OnTrackAssistant
     from ontrack.rag.generator import EchoGenerator
