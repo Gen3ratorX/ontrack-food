@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv*/
+raw_tmp/
+data/raw/
+artifacts/index/
+artifacts/*.joblib
+artifacts/runs/
+.ipynb_checkpoints/
+*.egg-info/
+.pytest_cache/

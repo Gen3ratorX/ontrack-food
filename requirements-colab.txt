@@ -1,0 +1,7 @@
+# Extra packages for MedGemma generation on a Colab GPU (T4). Colab already provides torch.
+-r requirements.txt
+transformers>=4.50.0   # Gemma 3 / MedGemma support starts at 4.50
+accelerate>=0.34
+bitsandbytes>=0.43     # 4-bit loading
+datasets>=2.19         # AfriMed-QA loader (optional)
+pillow>=10            # required by the Gemma 3 processor (preinstalled on Colab)

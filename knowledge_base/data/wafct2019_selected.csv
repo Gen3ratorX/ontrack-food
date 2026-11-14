@@ -1,0 +1,47 @@
+code,ontrack_name,food_name_en,energy_kcal,protein_g,fat_g,carb_available_g,fibre_g,sodium_mg,potassium_mg
+01_099,kenkey (cooked fermented maize dough),"Maize dough, fermented (kenkey), from whole white maize with salt added, cooked",139,3.7,2.1,25.2,2.6,270,74
+01_102,"Hausa koko (fermented millet porridge, no sugar)","Millet porridge, fermented (hausa koko/ben saalga), from whole millet grains only, cooked",69,0.9,0.8,8.9,1.2,0,17
+01_134,"white rice, boiled (base of jollof / plain rice)","Rice, white, polished, boiled* (as part of a recipe)",118,2.3,0.2,26.4,0.6,2,29
+01_152,"brown rice, boiled","Rice, brown, boiled* (as part of a recipe)",138,3.1,0.6,29.1,1.8,1,110
+01_033,"millet, whole grain, boiled","Pearl millet, whole grains, boiled* (without salt), drained",152,3.9,2.5,26.8,3.8,4,111
+01_046,"white bread (wheat, unfortified)","Bread, wheat, white, unfortified",249,7.5,1.3,50.5,2.9,676,139
+01_048,wholemeal bread,"Bread, wheat, wholemeal, unfortified",232,11.1,2.8,37.6,6.4,438,235
+02_041,fermented cassava paste (Nigerian-style wet fufu; not the same as Ghanaian pounded fufu),"Cassava, fermented paste from white cassava flour (wet fufu)",165,1,[0.4],38.7,1.7,4,208
+02_040,dry fufu flour (fermented cassava),"Cassava, flour, from fermented white cassava (dry fufu)",346,2.1,[0.7],80.9,3.6,7,434
+02_039,"gari (white, toasted)","Cassava, grated, from fermented white cassava, toasted without oil (white gari)",351,1.2,0.5,82.9,5,2,309
+02_003,"cassava, boiled (ampesi)","Cassava, tuber, white flesh, boiled* (without salt), drained",121,1.1,0.3,27,3.2,1,114
+02_006,"cocoyam, white, boiled","Cocoyam, tuber, white, boiled* (without salt), drained",143,3.4,0.3,30.4,2.1,8,447
+02_064,"plantain, unripe (green), boiled","Plantain, unripe, ivory flesh, boiled* (without salt), drained",151,1.8,[1.1],30.3,6.2,26,537
+02_057,"plantain, ripe, boiled","Plantain, ripe, ivory flesh, boiled* (without salt), drained",151,1.4,[0.2],34.6,2.5,3,420
+02_084,"plantain, deep fried (e.g. kelewele / fried plantain)","Plantain, deep fried in unfortified vegetable oil*",375,2.1,16.9,51.7,3.7,325,785
+02_020,"yam, boiled","Yam, tuber, pale, boiled* (without salt), drained",132,2.4,[0.4],26.8,5.9,6,322
+02_082,"yam, deep fried","Yam, tuber, deep fried in unfortified vegetable oil*",262,3.6,8,39.6,8.8,162,621
+02_018,"water yam, boiled","Water yam, tuber, boiled* (without salt), drained",123,2.5,0.1,22.7,10.2,5,237
+02_072,"sweet potato, orange flesh, boiled","Sweet potato, orange flesh, boiled* (without salt), drained",91,1,0.2,19.8,3,16,230
+03_007,"cowpea / black-eyed beans, boiled (waakye, red red)","Cowpea, not soaked, boiled* (without salt), drained",122,8.5,0.5,18.3,4.7,6,314
+03_019,"Bambara groundnut (aboboi), Ghana, boiled","Bambara groundnut, combined varieties (Ghana), not soaked, boiled* (without salt), drained",159,10.4,2.7,16,14.5,1,433
+04_029,"kontomire (cocoyam leaves), boiled","Cocoyam, leaves, fresh, boiled* (without salt), drained",39,3.6,0.7,2.4,4.5,2,226
+04_034,"garden egg (eggplant), boiled","Eggplant, fruit, boiled* (without salt), drained",33,1.2,[0.3],4.3,4.3,3,159
+04_103,"native garden egg, boiled","Native eggplant, fruit, boiled* (without salt), drained",35,1.4,[0.4],4.2,4.3,3,128
+04_042,"okro (okra), boiled","Okra, fruit, fresh, boiled* (without salt), drained",31,1.5,[0.2],3.8,3.7,8,174
+04_024,"amaranth leaves (aleefi), boiled","Amaranth, leaves, fresh, boiled* (without salt), drained",41,4.2,[0.4],3.1,3.9,5,278
+04_039,"ayoyo (jute mallow) leaves, boiled","Jute mallow (bush-okra), leaves, fresh, boiled* (without salt), drained",50,4.4,[0.3],3.2,8.4,9,139
+05_002,avocado (pear),"Avocado, fruit, raw",156,1.6,14.8,2.1,4,4,414
+05_015,"mango, ripe","Mango, orange flesh, ripe, raw",70,0.6,[0.2],15.3,1.8,3,194
+05_017,"pawpaw (papaya), ripe","Papaya, fruit, ripe, raw",59,0.4,[0.1],13,2.1,4,220
+05_018,pineapple,"Pineapple, fruit, raw",53,0.4,[0.2],11.4,1.8,2,233
+05_016,orange,"Orange, raw",44,0.7,0.4,8.7,1.7,2,162
+05_022,watermelon,"Watermelon, fruit, raw",25,0.5,[0.1],5,0.9,4,109
+05_003,"banana, ripe","Banana, white flesh, ripe, raw",121,1.3,0.2,27.7,1.9,2,329
+06_025,"groundnuts, Ghana, raw","Groundnut, combined varieties, shelled, dried, raw (Ghana)",566,22.4,[44.5],14.7,8.6,6,619
+06_026,groundnut paste,"Groundnut paste, from groundnuts only",605,23.9,[49.9],11,8.3,6,619
+08_002,"egg, boiled","Egg, chicken, boiled* (without salt)",150.2,13.5,[10.6],0.2,0,157,143
+09_043,"tilapia, grilled","Tilapia, fillet, grilled* (without salt or fat)",111.5,23.6,[1.9],0,0,69,286
+09_037,"sardine, canned in oil","Sardine, canned in oil, drained, with bones",239,24.8,15.5,0,0,438,350
+07_035,"chicken, light meat without skin, grilled","Chicken, light meat without skin, grilled* (without salt or fat)",149,29.5,3.5,0,0,44,317
+11_004,red palm oil,"Palm oil, red",898,0,99.8,0,0,0,0
+12_024,"carbonated soft drink (cola, Sprite-type)","Carbonated drink (e.g. Coca-Cola, Sprite)",40,tr,0.1,9.9,0,9,2
+12_011,"orange juice, fresh, unsweetened","Juice, orange, fresh, unsweetened",42,0.7,0.2,9.3,0.1,1,182
+12_023,coconut water,Coconut water,22,0.2,[0.5],4.2,0,41,205
+13_002,white sugar,"Sugar, white",400,0,0,100.0,0,1,2
+13_001,honey,Honey,326,0.4,0,81.0,0.2,4,52
