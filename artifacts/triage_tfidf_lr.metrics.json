@@ -1,0 +1,334 @@
+{
+  "n_examples": 158,
+  "n_train": 118,
+  "n_holdout": 40,
+  "seed": 42,
+  "label_counts": {
+    "general_education": 68,
+    "needs_clinician": 45,
+    "emergency": 45
+  },
+  "holdout_model_only": {
+    "report": {
+      "general_education": {
+        "precision": 0.7272727272727273,
+        "recall": 0.9411764705882353,
+        "f1-score": 0.8205128205128205,
+        "support": 17.0
+      },
+      "needs_clinician": {
+        "precision": 1.0,
+        "recall": 0.36363636363636365,
+        "f1-score": 0.5333333333333333,
+        "support": 11.0
+      },
+      "emergency": {
+        "precision": 0.8571428571428571,
+        "recall": 1.0,
+        "f1-score": 0.9230769230769231,
+        "support": 12.0
+      },
+      "accuracy": 0.8,
+      "macro avg": {
+        "precision": 0.8614718614718614,
+        "recall": 0.7682709447415329,
+        "f1-score": 0.7589743589743589,
+        "support": 40.0
+      },
+      "weighted avg": {
+        "precision": 0.8412337662337663,
+        "recall": 0.8,
+        "f1-score": 0.7723076923076924,
+        "support": 40.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "general_education",
+        "needs_clinician",
+        "emergency"
+      ],
+      "matrix": [
+        [
+          16,
+          0,
+          1
+        ],
+        [
+          6,
+          4,
+          1
+        ],
+        [
+          0,
+          0,
+          12
+        ]
+      ]
+    },
+    "accuracy": 0.8,
+    "macro_f1": 0.7589743589743589,
+    "emergency_recall": 1.0
+  },
+  "holdout_rules_only": {
+    "report": {
+      "general_education": {
+        "precision": 0.9444444444444444,
+        "recall": 1.0,
+        "f1-score": 0.9714285714285714,
+        "support": 17.0
+      },
+      "needs_clinician": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 11.0
+      },
+      "emergency": {
+        "precision": 1.0,
+        "recall": 0.9166666666666666,
+        "f1-score": 0.9565217391304348,
+        "support": 12.0
+      },
+      "accuracy": 0.975,
+      "macro avg": {
+        "precision": 0.9814814814814815,
+        "recall": 0.9722222222222222,
+        "f1-score": 0.975983436853002,
+        "support": 40.0
+      },
+      "weighted avg": {
+        "precision": 0.976388888888889,
+        "recall": 0.975,
+        "f1-score": 0.9748136645962733,
+        "support": 40.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "general_education",
+        "needs_clinician",
+        "emergency"
+      ],
+      "matrix": [
+        [
+          17,
+          0,
+          0
+        ],
+        [
+          0,
+          11,
+          0
+        ],
+        [
+          1,
+          0,
+          11
+        ]
+      ]
+    },
+    "accuracy": 0.975,
+    "macro_f1": 0.975983436853002,
+    "emergency_recall": 0.9166666666666666
+  },
+  "holdout_gate_rules_plus_model": {
+    "report": {
+      "general_education": {
+        "precision": 1.0,
+        "recall": 0.9411764705882353,
+        "f1-score": 0.9696969696969697,
+        "support": 17.0
+      },
+      "needs_clinician": {
+        "precision": 1.0,
+        "recall": 0.9090909090909091,
+        "f1-score": 0.9523809523809523,
+        "support": 11.0
+      },
+      "emergency": {
+        "precision": 0.8571428571428571,
+        "recall": 1.0,
+        "f1-score": 0.9230769230769231,
+        "support": 12.0
+      },
+      "accuracy": 0.95,
+      "macro avg": {
+        "precision": 0.9523809523809524,
+        "recall": 0.9500891265597148,
+        "f1-score": 0.9483849483849484,
+        "support": 40.0
+      },
+      "weighted avg": {
+        "precision": 0.9571428571428571,
+        "recall": 0.95,
+        "f1-score": 0.9509490509490508,
+        "support": 40.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "general_education",
+        "needs_clinician",
+        "emergency"
+      ],
+      "matrix": [
+        [
+          16,
+          0,
+          1
+        ],
+        [
+          0,
+          10,
+          1
+        ],
+        [
+          0,
+          0,
+          12
+        ]
+      ]
+    },
+    "accuracy": 0.95,
+    "macro_f1": 0.9483849483849484,
+    "emergency_recall": 1.0
+  },
+  "cv5_model_only": {
+    "report": {
+      "general_education": {
+        "precision": 0.8611111111111112,
+        "recall": 0.9117647058823529,
+        "f1-score": 0.8857142857142857,
+        "support": 68.0
+      },
+      "needs_clinician": {
+        "precision": 0.8292682926829268,
+        "recall": 0.7555555555555555,
+        "f1-score": 0.7906976744186046,
+        "support": 45.0
+      },
+      "emergency": {
+        "precision": 0.9111111111111111,
+        "recall": 0.9111111111111111,
+        "f1-score": 0.9111111111111111,
+        "support": 45.0
+      },
+      "accuracy": 0.8670886075949367,
+      "macro avg": {
+        "precision": 0.8671635049683829,
+        "recall": 0.8594771241830065,
+        "f1-score": 0.8625076904146671,
+        "support": 158.0
+      },
+      "weighted avg": {
+        "precision": 0.8662824602929573,
+        "recall": 0.8670886075949367,
+        "f1-score": 0.8658858656798015,
+        "support": 158.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "general_education",
+        "needs_clinician",
+        "emergency"
+      ],
+      "matrix": [
+        [
+          62,
+          5,
+          1
+        ],
+        [
+          8,
+          34,
+          3
+        ],
+        [
+          2,
+          2,
+          41
+        ]
+      ]
+    },
+    "accuracy": 0.8670886075949367,
+    "macro_f1": 0.8625076904146671,
+    "emergency_recall": 0.9111111111111111
+  },
+  "cv5_gate_rules_plus_model": {
+    "report": {
+      "general_education": {
+        "precision": 0.9841269841269841,
+        "recall": 0.9117647058823529,
+        "f1-score": 0.9465648854961832,
+        "support": 68.0
+      },
+      "needs_clinician": {
+        "precision": 0.8913043478260869,
+        "recall": 0.9111111111111111,
+        "f1-score": 0.9010989010989011,
+        "support": 45.0
+      },
+      "emergency": {
+        "precision": 0.9183673469387755,
+        "recall": 1.0,
+        "f1-score": 0.9574468085106383,
+        "support": 45.0
+      },
+      "accuracy": 0.9367088607594937,
+      "macro avg": {
+        "precision": 0.9312662262972822,
+        "recall": 0.940958605664488,
+        "f1-score": 0.935036865035241,
+        "support": 158.0
+      },
+      "weighted avg": {
+        "precision": 0.9389611467408464,
+        "recall": 0.9367088607594937,
+        "f1-score": 0.9367149945960109,
+        "support": 158.0
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "general_education",
+        "needs_clinician",
+        "emergency"
+      ],
+      "matrix": [
+        [
+          62,
+          5,
+          1
+        ],
+        [
+          1,
+          41,
+          3
+        ],
+        [
+          0,
+          0,
+          45
+        ]
+      ]
+    },
+    "accuracy": 0.9367088607594937,
+    "macro_f1": 0.935036865035241,
+    "emergency_recall": 1.0
+  },
+  "note": "Synthetic seed data; metrics are optimistic and only show the pipeline works.",
+  "holdout_gate_errors": [
+    {
+      "text": "I am pregnant and diabetic, how much insulin do I need now?",
+      "true": "needs_clinician",
+      "gate": "emergency"
+    },
+    {
+      "text": "Why does my sugar go up after eating rice?",
+      "true": "general_education",
+      "gate": "emergency"
+    }
+  ]
+}
