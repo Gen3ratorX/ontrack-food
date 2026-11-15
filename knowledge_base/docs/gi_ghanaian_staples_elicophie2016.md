@@ -27,3 +27,5 @@ Caveats for OnTrack answers:
 - Only 10 healthy people without diabetes; responses in people with diabetes may differ.
 - GI applies to the tested recipe and a 50 g available-carbohydrate portion. Portion size (glycaemic load), the soup, fish and vegetables eaten with it, and preparation change the real effect.
 - A low GI does not make a food "free" — large balls of kenkey or fufu still contain a lot of carbohydrate.
+- Use the class with the number: locally pounded fufu GI 55 is low; banku GI 73 is high. Do not call banku a lighter or lower-GI swap for fufu.
+- If a cited GI range spans more than one class (low ≤55, medium 56–69, high ≥70), do not call that food low.

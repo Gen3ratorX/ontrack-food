@@ -187,7 +187,8 @@ class MedGemmaGenerator:
                     **inputs, max_new_tokens=n_new, do_sample=False, pad_token_id=pad_id,
                 )
             decode = getattr(self.processor, "batch_decode", None) or self.processor.tokenizer.batch_decode
-            return [_strip_thinking(t) for t in decode(generated[:, n_prompt:], skip_special_tokens=True)]
+            texts = [_strip_thinking(t) for t in decode(generated[:, n_prompt:], skip_special_tokens=True)]
+            return texts, self._truncation_flags(generated, n_prompt, n_new)
         except self.torch.cuda.OutOfMemoryError:
             inputs = None
             generated = None
@@ -197,6 +198,25 @@ class MedGemmaGenerator:
             inputs = None
             generated = None
             gc.collect()
+
+    def _truncation_flags(self, generated, n_prompt: int, n_new: int) -> list[bool]:
+        """True when a row used the full new-token budget and did not end on EOS."""
+        eos = getattr(self.processor.tokenizer, "eos_token_id", None)
+        if eos is None:
+            eos_ids: set[int] = set()
+        elif isinstance(eos, int):
+            eos_ids = {eos}
+        else:
+            eos_ids = {int(x) for x in eos}
+        hit_cap = int(generated.shape[-1]) >= n_prompt + n_new
+        flags = []
+        for row in generated:
+            if not hit_cap:
+                flags.append(False)
+                continue
+            last = int(row[n_prompt + n_new - 1])
+            flags.append(last not in eos_ids)
+        return flags
 
     def generate_batch(self, batch_messages: list[list[dict]], max_new_tokens: int | None = None,
                        batch_size: int | None = None) -> list[str]:
@@ -219,13 +239,14 @@ class MedGemmaGenerator:
         order = sorted(range(len(batch_messages)), key=lambda i: (lengths[i], i))
         ordered = [batch_messages[i] for i in order]
         results: list[str | None] = [None] * len(batch_messages)
+        truncated: list[bool] = [False] * len(batch_messages)
         index = 0
         saw_oom = False
         while index < len(ordered):
             this = min(bs, len(ordered) - index)
             chunk = ordered[index:index + this]
             try:
-                texts = self._generate_chunk(chunk, n_new)
+                texts, flags = self._generate_chunk(chunk, n_new)
             except self.torch.cuda.OutOfMemoryError:
                 if this == 1:
                     raise
@@ -238,9 +259,11 @@ class MedGemmaGenerator:
                 saw_oom = False
             if len(texts) != len(chunk):
                 raise RuntimeError(f"generate_batch returned {len(texts)} texts for {len(chunk)} prompts")
-            for offset, text in enumerate(texts):
+            for offset, (text, flag) in enumerate(zip(texts, flags)):
                 results[order[index + offset]] = text
+                truncated[order[index + offset]] = bool(flag)
             index += this
+        self.last_truncated = truncated
         return [t if t is not None else "" for t in results]
 
 
@@ -263,4 +286,5 @@ class EchoGenerator:
 
     def generate_batch(self, batch_messages: list[list[dict]], max_new_tokens: int | None = None,
                        batch_size: int | None = None) -> list[str]:
+        self.last_truncated = [False] * len(batch_messages)
         return [self.generate(m, max_new_tokens=max_new_tokens) for m in batch_messages]

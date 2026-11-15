@@ -12,17 +12,17 @@ topic: A1C goals, glucose targets, hypoglycaemia levels
 ## Goals (individualised by the clinician)
 - An A1C goal of less than 7% (53 mmol/mol) is appropriate for many non-pregnant adults without significant hypoglycaemia (Rec 6.3a). Lower or less strict goals may suit some people; goals are set with the care team.
 - For CGM users, time in range above 70% is appropriate for many adults (Rec 6.3b).
-- Table 6.3 (many non-pregnant adults): pre-meal capillary glucose 80–130 mg/dL (4.4–7.2 mmol/L); peak after-meal glucose below 180 mg/dL (below 10.0 mmol/L), measured 1–2 hours after the start of a meal.
+- Table 6.3 (many non-pregnant adults): pre-meal capillary glucose 4.4–7.2 mmol/L (80–130 mg/dL); peak after-meal glucose below 10.0 mmol/L (180 mg/dL), measured 1–2 hours after the start of a meal. Do not use a tighter post-meal number such as 5.3 mmol/L.
 - Glycaemic status should be assessed at least twice a year, more often if goals are not met or treatment changes (Rec 6.2).
 
 ## Hypoglycaemia classification (Table 6.4)
-- Level 1: glucose below 70 mg/dL (3.9 mmol/L) and at or above 54 mg/dL (3.0 mmol/L).
-- Level 2: glucose below 54 mg/dL (3.0 mmol/L) — needs immediate action.
+- Level 1: glucose below 3.9 mmol/L (70 mg/dL) and at or above 3.0 mmol/L (54 mg/dL).
+- Level 2: glucose below 3.0 mmol/L (54 mg/dL) — needs immediate action.
 - Level 3: a severe event with altered mental and/or physical status requiring assistance from another person, at any glucose level. It can progress to loss of consciousness, seizure, coma or death.
 - Symptoms include shakiness, irritability, confusion, fast heartbeat, sweating and hunger.
 
 ## Treatment principles
-- Glucose is the preferred treatment for a conscious person with glucose below 70 mg/dL (3.9 mmol/L); any glucose-containing carbohydrate can be used. Avoid high-fat or high-protein foods for initial treatment. Re-treat after 15 minutes if hypoglycaemia persists (Rec 6.15).
+- Glucose is the preferred treatment for a conscious person with glucose below 3.9 mmol/L (70 mg/dL). Give about 15 g of fast-acting sugar (glucose tablets, a sugary drink, or fruit juice). Do not use nuts, biscuits, or fruit with fat or fibre (such as chocolate or groundnuts) as the first treatment. Re-treat after 15 minutes if hypoglycaemia persists (Rec 6.15).
 - Glucagon should be prescribed for people taking insulin or at high risk of hypoglycaemia, and family should know how to use it (Rec 6.16).
 
 ## Hyperglycaemic crises

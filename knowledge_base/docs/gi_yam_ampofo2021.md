@@ -23,4 +23,4 @@ Design: 10 healthy subjects aged 20–50; capillary glucose over 2 hours. Yams w
 | Yellow yam, roasted | 70.62 ± 20.80 | High | Ampofo 2021, Table 1 |
 | Yellow yam, boiled | 75.18 ± 22.19 | High | Ampofo 2021, Table 1 |
 
-Authors' conclusion: white yam diets had relatively lower GI than yellow and water yam; boiling generally gave lower GI for white and water yam and could be used to prepare lower-GI meals. Note the large standard deviations and small sample. Frying adds oil and energy (see WAFCT: fried yam has much higher energy per 100 g than boiled yam).
+Authors' conclusion: white yam diets had relatively lower GI than yellow and water yam; boiling generally gave lower GI for white and water yam and could be used to prepare lower-GI meals. Note the large standard deviations and small sample. Frying adds oil and energy (see WAFCT: fried yam has much higher energy per 100 g than boiled yam). Across varieties the values run from about 44 (low) to 75 (high). That range spans more than one GI class, so do not call yam low unless the variety and cooking method are the ones measured.

@@ -66,6 +66,23 @@ def test_templates_are_not_generated_and_resume_skips_them(tmp_path):
     assert gen.calls == 0 and gen.batches == []
 
 
+def test_truncated_flag_is_stored_and_counted(tmp_path):
+    from ontrack.classifier.gate import SafetyGate
+
+    class TruncEcho(EchoGenerator):
+        def generate_batch(self, batch_messages, max_new_tokens=None, batch_size=None):
+            texts = super().generate_batch(batch_messages, max_new_tokens=max_new_tokens, batch_size=batch_size)
+            self.last_truncated = [True] * len(texts)
+            return texts
+
+    items = [_item("g1", "What is the plate method?", "general_education")]
+    summary = run(items, ["no_rag"], TruncEcho(), None, SafetyGate(), None, tmp_path, batch_size=2)
+    row = json.loads((tmp_path / "responses.jsonl").read_text().splitlines()[0])
+    assert row["truncated"] is True
+    assert summary["n_truncated"] == 1
+    assert summary["truncated"]["no_rag"] == 1
+
+
 def test_resume_generates_only_the_missing_rows(tmp_path):
     from ontrack.classifier.gate import SafetyGate
 

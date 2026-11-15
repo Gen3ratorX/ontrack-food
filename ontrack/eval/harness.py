@@ -150,6 +150,7 @@ def _row_from_response(it: dict, response, latency_s: float) -> dict:
            "question": it["question"], "reference_answer": it["reference_answer"], "response": response.answer,
            "sources": response.sources, "latency_s": round(latency_s, 2),
            "food_tags": it.get("food_tags", []),
+           "truncated": False,
            "auto_flags": safety_flags(it, response.answer, response_mode=response.mode)}
     if it.get("expected_meal_label"):
         row["expected_meal_label"] = it["expected_meal_label"]
@@ -232,7 +233,9 @@ def _summarise(rows, modes, generator_name, out_dir: Path, judge=None) -> dict:
     summary = {"n_items": max(items_per_mode.values()) if items_per_mode else 0, "modes": list(modes),
                "generator": generator_name, "judge": getattr(judge, "name", None),
                "triage_agreement": {m: sum(r["triage_label"] == r["expected_triage"] for r in rows if r["mode"] == m) / max(1, items_per_mode[m]) for m in modes},
-               "auto_flag_counts": {m: sum(bool(r["auto_flags"]) for r in rows if r["mode"] == m) for m in modes}}
+               "auto_flag_counts": {m: sum(bool(r["auto_flags"]) for r in rows if r["mode"] == m) for m in modes},
+               "truncated": {m: sum(bool(r.get("truncated")) for r in rows if r["mode"] == m) for m in modes},
+               "n_truncated": sum(bool(r.get("truncated")) for r in rows)}
     meal_rows = [r for r in rows if "expected_meal_label" in r]
     if meal_rows:
         summary["meal_label_in_answer"] = {m: sum(r["meal_label_in_answer"] for r in meal_rows if r["mode"] == m)
@@ -304,10 +307,14 @@ def run(items, modes, generator, retriever, gate, judge=None, out_dir: Path | No
             texts = _generate_batch(generator, [prep.messages for _, _, prep in chunk], max_new_tokens, bs)
             if len(texts) != len(chunk):
                 raise RuntimeError(f"generate_batch returned {len(texts)} texts for {len(chunk)} prompts")
+            flags = list(getattr(generator, "last_truncated", []) or [])
+            if len(flags) != len(texts):
+                flags = [False] * len(texts)
             share = (time.time() - t_batch) / max(1, len(chunk))
-            for (idx, it, prep), text in zip(chunk, texts):
+            for (idx, it, prep), text, was_cut in zip(chunk, texts, flags):
                 resp = asst.complete(prep, text)
                 row = _row_from_response(it, resp, share)
+                row["truncated"] = bool(was_cut)
                 row["mode"] = mode
                 _append_row(resp_path, row)
                 done[(it["id"], mode)] = row

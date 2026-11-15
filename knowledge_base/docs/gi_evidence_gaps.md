@@ -9,7 +9,7 @@ topic: glycaemic index, evidence gaps, waakye, jollof, plantain, gari
 ---
 # Foods with no verified GI value in this knowledge base
 
-OnTrack must NOT state a GI number for these foods. Say that a measured value was not found, and fall back to general guidance (portion size, plate method, fibre, preparation method).
+OnTrack must NOT state a GI number for these foods. Say that a measured value was not found, and fall back to general guidance (portion size, plate method, fibre, preparation method). If asked for the GI of waakye, jollof, or gari, say the evidence is unavailable. Do not invent a number.
 
 - Waakye (rice and beans): no directly measured GI for a typical Ghanaian waakye meal was found. Do not average the GI of rice and beans.
 - Jollof rice: no Ghanaian measured GI found. It is a white-rice dish; refined grains raise blood sugar faster (CDC).

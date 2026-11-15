@@ -202,6 +202,9 @@ class MealAnalysis:
             else:
                 bits.append("no GI or carbohydrate data")
             lines.append("- " + "; ".join(bits))
+        lines.append("Use the GI class written next to each number (55 or below = low, 56–69 = medium, 70 or above = high). "
+                     "Do not call a food low when its cited range spans more than one class. "
+                     "Fufu GI 55 is low; banku GI 73 is high, so banku is not a lighter swap for fufu.")
         if self.drivers:
             lines.append("Drivers of the rating: " + ", ".join(self.drivers))
         if self.moderators:

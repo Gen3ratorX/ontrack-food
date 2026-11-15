@@ -27,7 +27,7 @@ If ketones are present in urine, call your doctor right away.
 - ketones in your urine
 - cannot keep liquids down for more than 4 hours, or food for more than 24 hours
 - losing 5 pounds or more during the illness
-- blood sugar lower than 60 mg/dL (3.3 mmol/L)
+- blood sugar lower than 3.3 mmol/L (60 mg/dL)
 - vomiting and/or severe diarrhoea for more than 6 hours
 - temperature over 101 °F (about 38.3 °C) for 24 hours
 If needed, have someone else call your doctor or take you to hospital, to avoid unsafe driving.

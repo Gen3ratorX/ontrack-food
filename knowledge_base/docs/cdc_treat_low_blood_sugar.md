@@ -10,9 +10,9 @@ topic: hypoglycaemia, first aid, emergency
 # Treating low blood sugar — CDC
 
 ## The 15-15 rule
-If your blood sugar is low (below 70 mg/dL, about 3.9 mmol/L):
-1. Have 15 grams of carbs, then wait 15 minutes.
-2. Check your blood sugar again. If it is still less than 70 mg/dL (3.9 mmol/L), repeat.
+If your blood sugar is low (below 3.9 mmol/L, 70 mg/dL):
+1. Have 15 grams of fast-acting carbohydrate (glucose tablets, a regular sugary drink, or fruit juice), then wait 15 minutes. Do not use nuts, biscuits, or fruit with fat or fibre as this first treatment.
+2. Check your blood sugar again. If it is still less than 3.9 mmol/L (70 mg/dL), repeat.
 3. Keep repeating until your blood sugar is back in your target range.
 4. After treating the low, eat a balanced snack or meal with protein and carbs.
 
@@ -27,7 +27,7 @@ Sugars need to be absorbed quickly. Foods high in fibre (fruit, beans, lentils) 
 - 1 dose of glucose gel (usually 1 tube)
 
 ## Severely low blood sugar
-If blood sugar drops below 55 mg/dL (about 3.1 mmol/L) it is considered severely low and the 15-15 rule may not be enough; the person may not be able to check or treat it themselves. Injectable glucagon (prescription) is the best treatment for severe lows. Contact a doctor for emergency medical treatment immediately after a glucagon injection. If the person is awake and able to swallow, give a fast-acting sugar source and then a longer-acting carbohydrate with protein.
+If blood sugar drops below 3.1 mmol/L (55 mg/dL) it is considered severely low and the 15-15 rule may not be enough; the person may not be able to check or treat it themselves. Injectable glucagon (prescription) is the best treatment for severe lows. Contact a doctor for emergency medical treatment immediately after a glucagon injection. If the person is awake and able to swallow, give a fast-acting sugar source and then a longer-acting carbohydrate with protein.
 
 ## Prevention
 Monitor frequently. If lows keep happening, share your blood sugar records, medicines, activity and food patterns with your doctor. Do not make any changes to your medicines without talking to your doctor.

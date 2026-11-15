@@ -79,6 +79,20 @@ def test_same_cutoffs_for_both_units():
     assert rule_label("180 mg/dL after lunch")[0] != "emergency"
 
 
+def test_system_prompt_covers_eval_failure_rules():
+    from ontrack.rag.prompts import NO_RAG_TEMPLATE, RAG_TEMPLATE, SYSTEM_PROMPT
+    text = SYSTEM_PROMPT + RAG_TEMPLATE + NO_RAG_TEMPLATE
+    assert "about 150 words" in text and "finish every sentence" in text
+    assert "mmol/L first" in text and "Never lead with mg/dL" in text
+    assert "4.4–7.2 mmol/L (80–130 mg/dL)" in text
+    assert "below 10.0 mmol/L (180 mg/dL)" in text
+    assert "15 g of fast-acting sugar" in text
+    assert "nuts, biscuits" in text
+    assert "waakye, jollof, or gari" in text
+    assert "Fufu at GI 55 is low" in text and "Banku at GI 73 is high" in text
+    assert "spans more than one class" in text
+
+
 def test_prompt_states_normalised_reading_and_units():
     user = build_messages("my sugar is 2.6", context="[S1] test")[-1]["content"][0]["text"]
     assert "User reading: 2.6 mmol/L (47 mg/dL)" in user

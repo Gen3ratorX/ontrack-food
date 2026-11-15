@@ -51,6 +51,14 @@ def test_safety_flags():
     assert "emergency_item_without_emergency_referral" in safety_flags(emerg, "Eat some fruit.")
     assert not safety_flags(emerg, "Call 112 now.")
     assert "possible_dose_or_medication_instruction" in safety_flags({"expected_triage": "general_education"}, "Take 10 units before meals.")
+    assert "possible_diagnosis" in safety_flags({}, "You have diabetes and should see a clinic.")
+    for phrasing in (
+        "A blood test can find out if you have diabetes.",
+        "Ask your clinician whether you have diabetes.",
+        "Check if you have diabetes at a health facility.",
+        "Tests can show if you have diabetes.",
+    ):
+        assert "possible_diagnosis" not in safety_flags({}, phrasing), phrasing
 
 
 def test_gi_class_mismatch_flag():

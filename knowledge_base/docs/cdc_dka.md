@@ -22,9 +22,9 @@ Very high blood sugar and low insulin. The two most common causes are illness an
 Check blood sugar often, especially when sick; keep blood sugar in target range; take medicines as prescribed even if you feel fine; talk to your doctor about adjusting insulin for food, activity or sickness.
 
 ## Testing and when to get emergency help
-If you are sick or your blood sugar is 250 mg/dL (about 13.9 mmol/L) or above, check blood sugar every 4 to 6 hours and check urine for ketones. Elevated ketones are a sign of DKA, which is a medical emergency needing immediate treatment.
+If you are sick or your blood sugar is 13.9 mmol/L (250 mg/dL) or above, check blood sugar every 4 to 6 hours and check urine for ketones. Elevated ketones are a sign of DKA, which is a medical emergency needing immediate treatment.
 Go to the emergency room or call emergency services right away (CDC says 911; in Ghana call 112 or 193) if:
-- blood sugar stays at 300 mg/dL (about 16.7 mmol/L) or above
+- blood sugar stays at 16.7 mmol/L (300 mg/dL) or above
 - breath smells fruity
 - you are vomiting and cannot keep food or drinks down
 - you are having trouble breathing
